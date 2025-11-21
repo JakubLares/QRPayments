@@ -14,6 +14,7 @@ struct AccountsListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \BankAccount.createdAt, order: .reverse) private var accounts: [BankAccount]
     @State private var showingNewAccount = false
+    @State private var accountToEdit: BankAccount?
 
     var body: some View {
         NavigationStack {
@@ -116,6 +117,26 @@ struct AccountsListView: View {
                                             AccountCardView(account: account)
                                         }
                                         .buttonStyle(PlainButtonStyle())
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                            Button(role: .destructive) {
+                                                deleteAccount(account)
+                                            } label: {
+                                                Label("Delete", systemImage: "trash")
+                                            }
+                                        }
+                                        .contextMenu {
+                                            Button {
+                                                accountToEdit = account
+                                            } label: {
+                                                Label("Edit", systemImage: "pencil")
+                                            }
+
+                                            Button(role: .destructive) {
+                                                deleteAccount(account)
+                                            } label: {
+                                                Label("Delete", systemImage: "trash")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -142,6 +163,16 @@ struct AccountsListView: View {
             .sheet(isPresented: $showingNewAccount) {
                 NewAccountView()
             }
+            .sheet(item: $accountToEdit) { account in
+                EditAccountView(account: account)
+            }
+        }
+    }
+
+    private func deleteAccount(_ account: BankAccount) {
+        withAnimation {
+            modelContext.delete(account)
+            try? modelContext.save()
         }
     }
 }

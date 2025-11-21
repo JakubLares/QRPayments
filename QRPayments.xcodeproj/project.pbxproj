@@ -14,6 +14,7 @@
 		A1000005000000000000001 /* QRGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000005000000000000001 /* QRGenerationView.swift */; };
 		A1000006000000000000001 /* SPAYDGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000006000000000000001 /* SPAYDGenerator.swift */; };
 		A1000007000000000000001 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000007000000000000001 /* QRCodeGenerator.swift */; };
+		A1000008000000000000001 /* EditAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000008000000000000001 /* EditAccountView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +26,8 @@
 		A2000005000000000000001 /* QRGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRGenerationView.swift; sourceTree = "<group>"; };
 		A2000006000000000000001 /* SPAYDGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPAYDGenerator.swift; sourceTree = "<group>"; };
 		A2000007000000000000001 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
-		A2000008000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2000008000000000000001 /* EditAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccountView.swift; sourceTree = "<group>"; };
+		A2000009000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 			children = (
 				A2000003000000000000001 /* AccountsListView.swift */,
 				A2000004000000000000001 /* NewAccountView.swift */,
+				A2000008000000000000001 /* EditAccountView.swift */,
 				A2000005000000000000001 /* QRGenerationView.swift */,
 			);
 			path = Views;
@@ -105,7 +108,7 @@
 		A5000007000000000000001 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A2000008000000000000001 /* Info.plist */,
+				A2000009000000000000001 /* Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 				A1000002000000000000001 /* BankAccount.swift in Sources */,
 				A1000003000000000000001 /* AccountsListView.swift in Sources */,
 				A1000004000000000000001 /* NewAccountView.swift in Sources */,
+				A1000008000000000000001 /* EditAccountView.swift in Sources */,
 				A1000005000000000000001 /* QRGenerationView.swift in Sources */,
 				A1000006000000000000001 /* SPAYDGenerator.swift in Sources */,
 				A1000007000000000000001 /* QRCodeGenerator.swift in Sources */,
