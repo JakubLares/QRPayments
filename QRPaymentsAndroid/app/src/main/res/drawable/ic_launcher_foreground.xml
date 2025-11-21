@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- QR code icon for launcher -->
+    <group
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:translateX="27"
+        android:translateY="27">
+        <!-- Simple QR code pattern -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M20,20h20v20h-20z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M68,20h20v20h-20z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M20,68h20v20h-20z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M44,44h20v20h-20z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M68,68h20v20h-20z"/>
+        <!-- Corner squares -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24,24h12v12h-12z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M72,24h12v12h-12z"/>
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24,72h12v12h-12z"/>
+    </group>
+</vector>
