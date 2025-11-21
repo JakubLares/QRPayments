@@ -1,6 +1,7 @@
 package com.qrpayments.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,7 +18,10 @@ import com.qrpayments.ui.screens.QRGenerationScreen
 @Composable
 fun QRPaymentsApp() {
     val navController = rememberNavController()
-    val viewModel: AccountsViewModel = viewModel()
+    val context = LocalContext.current
+    val viewModel: AccountsViewModel = viewModel(
+        factory = AccountsViewModelFactory(context.applicationContext as android.app.Application)
+    )
 
     NavHost(
         navController = navController,
