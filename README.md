@@ -22,7 +22,7 @@ The app includes three main screens:
 - **Language**: Swift
 - **Framework**: SwiftUI
 - **Persistence**: SwiftData
-- **Minimum iOS**: iOS 16.0+
+- **Minimum iOS**: iOS 17.0+
 - **Design**: iOS 26 Liquid Glass design language
 - **QR Standard**: SPAYD (Short Payment Descriptor) for Czech banking
 
@@ -83,7 +83,7 @@ QRPayments/
 ### Requirements
 
 - Xcode 15.0 or later
-- iOS 16.0+ device or simulator
+- iOS 17.0+ device or simulator
 - macOS Ventura 13.0 or later
 
 ### Steps
