@@ -194,14 +194,12 @@ struct QRGenerationView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingQRCode) {
-            if let qrImage = qrCodeImage {
-                QRCodeDisplayView(
-                    qrCodeImage: qrImage,
-                    account: account,
-                    amount: amount
-                )
-            }
+        .fullScreenCover(isPresented: $showingQRCode) {
+            QRCodeDisplayView(
+                qrCodeImage: qrCodeImage ?? UIImage(),
+                account: account,
+                amount: amount
+            )
         }
     }
 
@@ -216,14 +214,9 @@ struct QRGenerationView: View {
             message: message.isEmpty ? nil : message
         )
 
-        // Generate QR code and ensure it's set before showing sheet
-        if let generatedImage = QRCodeGenerator.generate(from: spaydString) {
-            qrCodeImage = generatedImage
-            // Small delay to ensure state propagates
-            DispatchQueue.main.async {
-                showingQRCode = true
-            }
-        }
+        // Generate QR code
+        qrCodeImage = QRCodeGenerator.generate(from: spaydString)
+        showingQRCode = true
     }
 }
 
