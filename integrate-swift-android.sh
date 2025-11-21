@@ -36,7 +36,9 @@ echo ""
 
 # Check for Android Swift SDK
 echo "Checking for Swift SDK for Android..."
-if ! swift sdk list | grep -q "android"; then
+ANDROID_SDK=$(swift sdk list | grep -i "android" | head -n 1 | xargs)
+
+if [ -z "$ANDROID_SDK" ]; then
     echo -e "${YELLOW}⚠️  Swift SDK for Android not found.${NC}"
     echo ""
     echo "To install Swift SDK for Android:"
@@ -49,7 +51,7 @@ if ! swift sdk list | grep -q "android"; then
         exit 1
     fi
 else
-    echo -e "${GREEN}✓ Swift SDK for Android found${NC}"
+    echo -e "${GREEN}✓ Swift SDK for Android found: ${ANDROID_SDK}${NC}"
 fi
 echo ""
 
@@ -57,8 +59,13 @@ echo ""
 echo "🔨 Step 2: Building Swift library for Android..."
 cd "$SWIFT_PACKAGE"
 
-echo "Building for Android ARM64..."
-if swift build --swift-sdk aarch64-unknown-linux-android -c release --product QRPaymentsCore; then
+if [ -z "$ANDROID_SDK" ]; then
+    echo -e "${RED}❌ No Android SDK found. Cannot build.${NC}"
+    exit 1
+fi
+
+echo "Building for Android ARM64 using SDK: $ANDROID_SDK"
+if swift build --swift-sdk "$ANDROID_SDK" -c release --product QRPaymentsCore; then
     echo -e "${GREEN}✓ Swift library built successfully${NC}"
 
     # Find the .so file
@@ -115,7 +122,7 @@ if [ -n "$SWIFT_JAVA_CMD" ]; then
     if $SWIFT_JAVA_CMD \
         --module QRPaymentsCore \
         --output "$GENERATED_BINDINGS" \
-        --swift-sdk aarch64-unknown-linux-android; then
+        --swift-sdk "$ANDROID_SDK"; then
         echo -e "${GREEN}✓ JNI bindings generated${NC}"
         echo "Generated files in: $GENERATED_BINDINGS"
     else
