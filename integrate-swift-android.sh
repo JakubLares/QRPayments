@@ -65,7 +65,8 @@ if [ -z "$ANDROID_SDK" ]; then
 fi
 
 echo "Building for Android ARM64 using SDK: $ANDROID_SDK"
-if swift build --swift-sdk "$ANDROID_SDK" -c release --product QRPaymentsCore; then
+# Build dynamic library for Android (required for JNI)
+if swift build --swift-sdk "$ANDROID_SDK" -c release --product QRPaymentsCore -Xlinker -shared; then
     echo -e "${GREEN}✓ Swift library built successfully${NC}"
 
     # Find the .so file
