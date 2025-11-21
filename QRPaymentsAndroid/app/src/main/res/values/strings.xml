@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QR Pay</string>
+
+    <!-- Account Management -->
+    <string name="accounts_title">My Accounts</string>
+    <string name="add_account">Add Account</string>
+    <string name="edit_account">Edit Account</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="no_accounts">No accounts yet</string>
+    <string name="add_first_account">Add your first account to start generating QR codes for payments</string>
+
+    <!-- Account Form -->
+    <string name="account_name">Account Name</string>
+    <string name="account_name_hint">e.g., My Main Account</string>
+    <string name="account_prefix">Prefix (optional)</string>
+    <string name="account_prefix_hint">6 digits max</string>
+    <string name="account_number">Account Number</string>
+    <string name="account_number_hint">10 digits</string>
+    <string name="bank_code">Bank Code</string>
+    <string name="bank_code_hint">4 digits (e.g., 0800)</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- QR Generation -->
+    <string name="generate_qr">Generate QR Code</string>
+    <string name="payment_amount">Amount (CZK)</string>
+    <string name="amount_hint">Optional</string>
+    <string name="variable_symbol">Variable Symbol</string>
+    <string name="variable_symbol_hint">Optional reference number</string>
+    <string name="message">Message</string>
+    <string name="message_hint">Optional message for receiver</string>
+    <string name="generate">Generate</string>
+
+    <!-- QR Display -->
+    <string name="qr_title">QR Payment Code</string>
+    <string name="scan_instructions">Scan this QR code with your banking app to make a payment</string>
+    <string name="close">Close</string>
+
+    <!-- Validation -->
+    <string name="error_empty_name">Account name is required</string>
+    <string name="error_empty_number">Account number is required</string>
+    <string name="error_invalid_bank_code">Bank code must be exactly 4 digits</string>
+    <string name="error_invalid_prefix">Invalid prefix format</string>
+    <string name="error_invalid_amount">Invalid amount</string>
+</resources>
