@@ -7,50 +7,145 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		QRPaymentsApp.swift in Sources = {isa = PBXBuildFile; };
-		BankAccount.swift in Sources = {isa = PBXBuildFile; };
-		AccountsListView.swift in Sources = {isa = PBXBuildFile; };
-		NewAccountView.swift in Sources = {isa = PBXBuildFile; };
-		QRGenerationView.swift in Sources = {isa = PBXBuildFile; };
-		SPAYDGenerator.swift in Sources = {isa = PBXBuildFile; };
-		QRCodeGenerator.swift in Sources = {isa = PBXBuildFile; };
+		A1000001000000000000001 /* QRPaymentsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000001000000000000001 /* QRPaymentsApp.swift */; };
+		A1000002000000000000001 /* BankAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000002000000000000001 /* BankAccount.swift */; };
+		A1000003000000000000001 /* AccountsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000003000000000000001 /* AccountsListView.swift */; };
+		A1000004000000000000001 /* NewAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000004000000000000001 /* NewAccountView.swift */; };
+		A1000005000000000000001 /* QRGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000005000000000000001 /* QRGenerationView.swift */; };
+		A1000006000000000000001 /* SPAYDGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000006000000000000001 /* SPAYDGenerator.swift */; };
+		A1000007000000000000001 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000007000000000000001 /* QRCodeGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		QRPayments.app = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRPayments.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3000000000000000000001 /* QRPayments.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRPayments.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000001000000000000001 /* QRPaymentsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRPaymentsApp.swift; sourceTree = "<group>"; };
+		A2000002000000000000001 /* BankAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BankAccount.swift; sourceTree = "<group>"; };
+		A2000003000000000000001 /* AccountsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsListView.swift; sourceTree = "<group>"; };
+		A2000004000000000000001 /* NewAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAccountView.swift; sourceTree = "<group>"; };
+		A2000005000000000000001 /* QRGenerationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRGenerationView.swift; sourceTree = "<group>"; };
+		A2000006000000000000001 /* SPAYDGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPAYDGenerator.swift; sourceTree = "<group>"; };
+		A2000007000000000000001 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
+		A2000008000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		A4000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
-		Main = {
+		A5000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
-				QRPayments,
+				A5000001000000000000001 /* QRPayments */,
+				A5000002000000000000001 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		QRPayments = {
+		A5000001000000000000001 /* QRPayments */ = {
 			isa = PBXGroup;
 			children = (
-				App,
-				Models,
-				Views,
-				Utilities,
-				Resources,
+				A5000003000000000000001 /* App */,
+				A5000004000000000000001 /* Models */,
+				A5000005000000000000001 /* Views */,
+				A5000006000000000000001 /* Utilities */,
+				A5000007000000000000001 /* Resources */,
 			);
 			path = QRPayments;
 			sourceTree = "<group>";
 		};
+		A5000002000000000000001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3000000000000000000001 /* QRPayments.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A5000003000000000000001 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A2000001000000000000001 /* QRPaymentsApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A5000004000000000000001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A2000002000000000000001 /* BankAccount.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A5000005000000000000001 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A2000003000000000000001 /* AccountsListView.swift */,
+				A2000004000000000000001 /* NewAccountView.swift */,
+				A2000005000000000000001 /* QRGenerationView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A5000006000000000000001 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A2000006000000000000001 /* SPAYDGenerator.swift */,
+				A2000007000000000000001 /* QRCodeGenerator.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A5000007000000000000001 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A2000008000000000000001 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
+/* Begin PBXNativeTarget section */
+		A6000000000000000000001 /* QRPayments */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8000000000000000000001 /* Build configuration list for PBXNativeTarget "QRPayments" */;
+			buildPhases = (
+				A7000001000000000000001 /* Sources */,
+				A4000000000000000000001 /* Frameworks */,
+				A7000002000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QRPayments;
+			productName = QRPayments;
+			productReference = A3000000000000000000001 /* QRPayments.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
 /* Begin PBXProject section */
-		Project = {
+		A9000000000000000000001 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A6000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
 			};
-			buildConfigurationList = BuildConfigurationList;
+			buildConfigurationList = A8000001000000000000001 /* Build configuration list for PBXProject "QRPayments" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -58,16 +153,243 @@
 				en,
 				Base,
 			);
-			mainGroup = Main;
-			productRefGroup = Products;
+			mainGroup = A5000000000000000000001;
+			productRefGroup = A5000002000000000000001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				QRPayments,
+				A6000000000000000000001 /* QRPayments */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		A7000002000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A7000001000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001000000000000001 /* QRPaymentsApp.swift in Sources */,
+				A1000002000000000000001 /* BankAccount.swift in Sources */,
+				A1000003000000000000001 /* AccountsListView.swift in Sources */,
+				A1000004000000000000001 /* NewAccountView.swift in Sources */,
+				A1000005000000000000001 /* QRGenerationView.swift in Sources */,
+				A1000006000000000000001 /* SPAYDGenerator.swift in Sources */,
+				A1000007000000000000001 /* QRCodeGenerator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A8000002000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A8000003000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A8000004000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QRPayments/Resources/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qrpayments.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A8000005000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QRPayments/Resources/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.qrpayments.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A8000000000000000000001 /* Build configuration list for PBXNativeTarget "QRPayments" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A8000004000000000000001 /* Debug */,
+				A8000005000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A8000001000000000000001 /* Build configuration list for PBXProject "QRPayments" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A8000002000000000000001 /* Debug */,
+				A8000003000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
 	};
-	rootObject = Project;
+	rootObject = A9000000000000000000001 /* Project object */;
 }
