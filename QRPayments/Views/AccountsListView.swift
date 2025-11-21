@@ -31,20 +31,20 @@ struct AccountsListView: View {
                 .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Header
-                    VStack(spacing: 16) {
-                        // QR Pay branding
-                        HStack {
-                            Text("QR Pay")
-                                .font(.system(size: 32, weight: .bold, design: .rounded))
-                                .foregroundStyle(.white)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 20)
+                    if accounts.isEmpty {
+                        // Empty state: QR Pay title + Create card only
+                        VStack(spacing: 16) {
+                            // QR Pay branding
+                            HStack {
+                                Text("QR Pay")
+                                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.white)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 20)
 
-                        // Create new account card - only shown when no accounts exist
-                        if accounts.isEmpty {
+                            // Create new account card
                             Button {
                                 showingNewAccount = true
                             } label: {
@@ -92,26 +92,20 @@ struct AccountsListView: View {
                             }
                             .padding(.horizontal, 24)
                         }
-                    }
-                    .padding(.bottom, accounts.isEmpty ? 24 : 16)
+                        .padding(.bottom, 24)
 
-                    // Accounts list section
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Accounts list")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 24)
+                        Spacer()
+                    } else {
+                        // With accounts: Show only accounts list
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Accounts list")
+                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 24)
+                                .padding(.top, 20)
 
-                        ScrollView {
-                            LazyVStack(spacing: 16) {
-                                if accounts.isEmpty {
-                                    // Empty state
-                                    Text("No accounts yet")
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(.white.opacity(0.6))
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, 40)
-                                } else {
+                            ScrollView {
+                                LazyVStack(spacing: 16) {
                                     ForEach(accounts) { account in
                                         NavigationLink(destination: QRGenerationView(account: account)) {
                                             AccountCardView(account: account)
@@ -139,9 +133,9 @@ struct AccountsListView: View {
                                         }
                                     }
                                 }
+                                .padding(.horizontal, 24)
+                                .padding(.bottom, 24)
                             }
-                            .padding(.horizontal, 24)
-                            .padding(.bottom, 24)
                         }
                     }
                 }
