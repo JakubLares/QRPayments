@@ -9,14 +9,21 @@
 
 import SwiftUI
 
+// Wrapper for QR code data to use with fullScreenCover(item:)
+struct QRCodeData: Identifiable {
+    let id = UUID()
+    let image: UIImage
+    let account: BankAccount
+    let amount: String
+}
+
 struct QRGenerationView: View {
     let account: BankAccount
 
     @State private var amount: String = ""
     @State private var variableSymbol: String = ""
     @State private var message: String = ""
-    @State private var qrCodeImage: UIImage?
-    @State private var showingQRCode = false
+    @State private var qrCodeData: QRCodeData?
 
     var body: some View {
         ZStack {
@@ -194,11 +201,11 @@ struct QRGenerationView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .fullScreenCover(isPresented: $showingQRCode) {
+        .fullScreenCover(item: $qrCodeData) { data in
             QRCodeDisplayView(
-                qrCodeImage: qrCodeImage ?? UIImage(),
-                account: account,
-                amount: amount
+                qrCodeImage: data.image,
+                account: data.account,
+                amount: data.amount
             )
         }
     }
@@ -214,9 +221,14 @@ struct QRGenerationView: View {
             message: message.isEmpty ? nil : message
         )
 
-        // Generate QR code
-        qrCodeImage = QRCodeGenerator.generate(from: spaydString)
-        showingQRCode = true
+        // Generate QR code and wrap in QRCodeData
+        if let generatedImage = QRCodeGenerator.generate(from: spaydString) {
+            qrCodeData = QRCodeData(
+                image: generatedImage,
+                account: account,
+                amount: amount
+            )
+        }
     }
 }
 
