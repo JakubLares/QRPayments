@@ -216,7 +216,11 @@ struct QRGenerationView: View {
 
         // Generate QR code
         qrCodeImage = QRCodeGenerator.generate(from: spaydString)
-        showingQRCode = true
+
+        // Delay sheet presentation to ensure state update completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            showingQRCode = true
+        }
     }
 }
 
