@@ -10,14 +10,24 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
+        // Static library for iOS/macOS
         .library(
             name: "QRPaymentsCore",
+            targets: ["QRPaymentsCore"]),
+        // Dynamic library for Android (JNI)
+        .library(
+            name: "QRPaymentsCore",
+            type: .dynamic,
             targets: ["QRPaymentsCore"]),
     ],
     targets: [
         .target(
             name: "QRPaymentsCore",
-            dependencies: []),
+            dependencies: [],
+            swiftSettings: [
+                // Add Android-specific compilation flag
+                .define("ANDROID", .when(platforms: [.linux]))
+            ]),
         .testTarget(
             name: "QRPaymentsCoreTests",
             dependencies: ["QRPaymentsCore"]),

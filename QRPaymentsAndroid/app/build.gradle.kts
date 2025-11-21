@@ -17,6 +17,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // NDK configuration for Swift library (ARM64 only)
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
+    }
+
+    // JNI libraries location
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("src/main/jniLibs")
+        }
     }
 
     buildTypes {
