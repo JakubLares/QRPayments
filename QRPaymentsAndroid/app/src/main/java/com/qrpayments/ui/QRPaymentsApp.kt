@@ -28,10 +28,10 @@ fun QRPaymentsApp() {
             AccountsListScreen(
                 viewModel = viewModel,
                 onAddAccount = {
-                    navController.navigate("account_form/new")
+                    navController.navigate("account_form_new")
                 },
                 onEditAccount = { accountId ->
-                    navController.navigate("account_form/edit/$accountId")
+                    navController.navigate("account_form_edit/$accountId")
                 },
                 onGenerateQR = { accountId ->
                     navController.navigate("qr_generation/$accountId")
@@ -39,25 +39,31 @@ fun QRPaymentsApp() {
             )
         }
 
-        // Account form (add/edit)
-        composable(
-            route = "account_form/{mode}/{accountId}",
-            arguments = listOf(
-                navArgument("mode") { type = NavType.StringType },
-                navArgument("accountId") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
+        // Account form - Add new account
+        composable("account_form_new") {
+            AccountFormScreen(
+                viewModel = viewModel,
+                accountId = null,
+                isEditMode = false,
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
+        }
+
+        // Account form - Edit existing account
+        composable(
+            route = "account_form_edit/{accountId}",
+            arguments = listOf(
+                navArgument("accountId") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
-            val mode = backStackEntry.arguments?.getString("mode") ?: "new"
             val accountId = backStackEntry.arguments?.getString("accountId")
 
             AccountFormScreen(
                 viewModel = viewModel,
                 accountId = accountId,
-                isEditMode = mode == "edit",
+                isEditMode = true,
                 onNavigateBack = {
                     navController.popBackStack()
                 }
