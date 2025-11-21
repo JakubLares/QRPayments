@@ -195,11 +195,13 @@ struct QRGenerationView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingQRCode) {
-            QRCodeDisplayView(
-                qrCodeImage: qrCodeImage,
-                account: account,
-                amount: amount
-            )
+            if let qrImage = qrCodeImage {
+                QRCodeDisplayView(
+                    qrCodeImage: qrImage,
+                    account: account,
+                    amount: amount
+                )
+            }
         }
     }
 
@@ -214,19 +216,20 @@ struct QRGenerationView: View {
             message: message.isEmpty ? nil : message
         )
 
-        // Generate QR code
-        qrCodeImage = QRCodeGenerator.generate(from: spaydString)
-
-        // Delay sheet presentation to ensure state update completes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            showingQRCode = true
+        // Generate QR code and ensure it's set before showing sheet
+        if let generatedImage = QRCodeGenerator.generate(from: spaydString) {
+            qrCodeImage = generatedImage
+            // Small delay to ensure state propagates
+            DispatchQueue.main.async {
+                showingQRCode = true
+            }
         }
     }
 }
 
 // MARK: - QR Code Display View
 struct QRCodeDisplayView: View {
-    let qrCodeImage: UIImage?
+    let qrCodeImage: UIImage
     let account: BankAccount
     let amount: String
 
@@ -289,19 +292,17 @@ struct QRCodeDisplayView: View {
                     }
 
                     // QR Code
-                    if let qrCodeImage = qrCodeImage {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                .fill(Color.white)
-                                .frame(width: 280, height: 280)
-                                .shadow(color: .black.opacity(0.2), radius: 30, y: 15)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(Color.white)
+                            .frame(width: 280, height: 280)
+                            .shadow(color: .black.opacity(0.2), radius: 30, y: 15)
 
-                            Image(uiImage: qrCodeImage)
-                                .interpolation(.none)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 240, height: 240)
-                        }
+                        Image(uiImage: qrCodeImage)
+                            .interpolation(.none)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 240, height: 240)
                     }
 
                     Text("Scan this QR code with your banking app")
