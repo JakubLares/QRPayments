@@ -30,7 +30,7 @@ struct AccountsListView: View {
                 .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Header with QR scan card
+                    // Header
                     VStack(spacing: 16) {
                         // QR Pay branding
                         HStack {
@@ -42,55 +42,57 @@ struct AccountsListView: View {
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
 
-                        // Create new account card
-                        Button {
-                            showingNewAccount = true
-                        } label: {
-                            ZStack {
-                                // Liquid Glass background
-                                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                    .fill(.ultraThinMaterial)
-                                    .overlay {
-                                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        // Create new account card - only shown when no accounts exist
+                        if accounts.isEmpty {
+                            Button {
+                                showingNewAccount = true
+                            } label: {
+                                ZStack {
+                                    // Liquid Glass background
+                                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                        .fill(.ultraThinMaterial)
+                                        .overlay {
+                                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                        }
+                                        .shadow(color: .black.opacity(0.1), radius: 20, y: 10)
+
+                                    VStack(spacing: 16) {
+                                        // QR code icon
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                                .fill(Color.white.opacity(0.9))
+                                                .frame(width: 120, height: 120)
+
+                                            Image(systemName: "qrcode")
+                                                .font(.system(size: 64))
+                                                .foregroundStyle(.blue)
+                                        }
+
+                                        VStack(spacing: 4) {
+                                            Text("Press to create")
+                                                .font(.system(size: 18, weight: .semibold))
+                                                .foregroundStyle(.white)
+
+                                            Text("new Account card.")
+                                                .font(.system(size: 18, weight: .semibold))
+                                                .foregroundStyle(.white)
+                                        }
+
+                                        Text("Take simple and quick way to pay.\nWe support all banks on the market.")
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(.white.opacity(0.8))
+                                            .multilineTextAlignment(.center)
+                                            .lineSpacing(4)
                                     }
-                                    .shadow(color: .black.opacity(0.1), radius: 20, y: 10)
-
-                                VStack(spacing: 16) {
-                                    // QR code icon
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                            .fill(Color.white.opacity(0.9))
-                                            .frame(width: 120, height: 120)
-
-                                        Image(systemName: "qrcode")
-                                            .font(.system(size: 64))
-                                            .foregroundStyle(.blue)
-                                    }
-
-                                    VStack(spacing: 4) {
-                                        Text("Press to create")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundStyle(.white)
-
-                                        Text("new Account card.")
-                                            .font(.system(size: 18, weight: .semibold))
-                                            .foregroundStyle(.white)
-                                    }
-
-                                    Text("Take simple and quick way to pay.\nWe support all banks on the market.")
-                                        .font(.system(size: 13))
-                                        .foregroundStyle(.white.opacity(0.8))
-                                        .multilineTextAlignment(.center)
-                                        .lineSpacing(4)
+                                    .padding(24)
                                 }
-                                .padding(24)
+                                .frame(height: 280)
                             }
-                            .frame(height: 280)
+                            .padding(.horizontal, 24)
                         }
-                        .padding(.horizontal, 24)
                     }
-                    .padding(.bottom, 24)
+                    .padding(.bottom, accounts.isEmpty ? 24 : 16)
 
                     // Accounts list section
                     VStack(alignment: .leading, spacing: 16) {
@@ -119,6 +121,20 @@ struct AccountsListView: View {
                             }
                             .padding(.horizontal, 24)
                             .padding(.bottom, 24)
+                        }
+                    }
+                }
+            }
+            .toolbar {
+                // Show plus button only when accounts exist
+                if !accounts.isEmpty {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            showingNewAccount = true
+                        } label: {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(.white)
                         }
                     }
                 }
