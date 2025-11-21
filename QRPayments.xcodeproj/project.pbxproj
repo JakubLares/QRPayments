@@ -1,0 +1,73 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		QRPaymentsApp.swift in Sources = {isa = PBXBuildFile; };
+		BankAccount.swift in Sources = {isa = PBXBuildFile; };
+		AccountsListView.swift in Sources = {isa = PBXBuildFile; };
+		NewAccountView.swift in Sources = {isa = PBXBuildFile; };
+		QRGenerationView.swift in Sources = {isa = PBXBuildFile; };
+		SPAYDGenerator.swift in Sources = {isa = PBXBuildFile; };
+		QRCodeGenerator.swift in Sources = {isa = PBXBuildFile; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		QRPayments.app = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QRPayments.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		Main = {
+			isa = PBXGroup;
+			children = (
+				QRPayments,
+			);
+			sourceTree = "<group>";
+		};
+		QRPayments = {
+			isa = PBXGroup;
+			children = (
+				App,
+				Models,
+				Views,
+				Utilities,
+				Resources,
+			);
+			path = QRPayments;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		Project = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = BuildConfigurationList;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = Main;
+			productRefGroup = Products;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				QRPayments,
+			);
+		};
+/* End PBXProject section */
+
+	};
+	rootObject = Project;
+}
