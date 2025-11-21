@@ -10,14 +10,9 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        // Static library for iOS/macOS
+        // Library that can be static or dynamic based on context
         .library(
             name: "QRPaymentsCore",
-            targets: ["QRPaymentsCore"]),
-        // Dynamic library for Android (JNI)
-        .library(
-            name: "QRPaymentsCore",
-            type: .dynamic,
             targets: ["QRPaymentsCore"]),
     ],
     targets: [
