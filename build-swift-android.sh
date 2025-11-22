@@ -126,9 +126,11 @@ if [ -d "$SDK_PATH" ]; then
     find "$SDK_PATH" -type d -name "*swift*" 2>/dev/null | grep -i "lib" | head -5
     echo ""
 
-    # Copy ALL libraries from usr/lib/aarch64-linux-android (except 32-bit and huge ICU)
-    # This ensures we don't miss any dependencies like libc++_shared.so
-    echo "   Copying ALL runtime libraries from SDK (excluding only FoundationICU and 32-bit libs)..."
+    # Copy ALL libraries from usr/lib/aarch64-linux-android (including FoundationICU)
+    # Following the pattern from official Swift Android examples:
+    # https://github.com/swiftlang/swift-android-examples/blob/main/hello-swift-java/build.gradle.kts
+    # They include "_FoundationICU" as a standard runtime library
+    echo "   Copying ALL runtime libraries from SDK (including FoundationICU, excluding only 32-bit libs)..."
 
     # Find the aarch64-linux-android directory
     ARCH_LIB_DIR=$(find "$SDK_PATH" -type d -path "*/usr/lib/aarch64-linux-android" 2>/dev/null | head -1)
@@ -137,13 +139,11 @@ if [ -d "$SDK_PATH" ]; then
         echo "   Found arch lib directory: $ARCH_LIB_DIR"
 
         # Get ALL .so files (maxdepth 1 excludes 32/ subdirectory)
-        # Only exclude the 39MB ICU library
-        ALL_LIBS=$(find "$ARCH_LIB_DIR" -maxdepth 1 -type f -name "*.so" 2>/dev/null)
-        SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -v "lib_FoundationICU.so")
+        # Include FoundationICU as per official examples
+        SWIFT_RUNTIME_LIBS=$(find "$ARCH_LIB_DIR" -maxdepth 1 -type f -name "*.so" 2>/dev/null)
     else
         echo "   ⚠️  Could not find aarch64-linux-android directory, falling back to broader search..."
-        ALL_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64" | grep -v "/32/")
-        SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -v "lib_FoundationICU.so")
+        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64" | grep -v "/32/")
     fi
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
