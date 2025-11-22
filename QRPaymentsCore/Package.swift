@@ -19,10 +19,18 @@ let package = Package(
             type: .dynamic, // Required for JNI on Android
             targets: ["QRPaymentsCore"]),
     ],
+    dependencies: [
+        // Swift-Java interoperability (official Swift.org project)
+        // Enables @JavaExport macro for automatic JNI binding generation
+        .package(url: "https://github.com/swiftlang/swift-java.git", branch: "main")
+    ],
     targets: [
         .target(
             name: "QRPaymentsCore",
-            dependencies: [],
+            dependencies: [
+                .product(name: "JavaKit", package: "swift-java"),
+                .product(name: "JavaKitJar", package: "swift-java"),
+            ],
             swiftSettings: [
                 // Android-specific compilation flag
                 // Android uses Linux kernel, so we check for .linux platform
