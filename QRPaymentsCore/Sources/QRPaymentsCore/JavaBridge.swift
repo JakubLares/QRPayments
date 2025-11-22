@@ -20,7 +20,7 @@ public func Swift_QRPaymentsCore_generateSPAYD(
     amount: UnsafePointer<CChar>?,
     variableSymbol: UnsafePointer<CChar>?,
     message: UnsafePointer<CChar>?
-) -> UnsafePointer<CChar> {
+) -> UnsafeMutablePointer<CChar>? {
     let prefixStr = String(cString: prefix)
     let accountNumberStr = String(cString: accountNumber)
     let bankCodeStr = String(cString: bankCode)
@@ -50,7 +50,7 @@ public func Swift_QRPaymentsCore_convertToIBAN(
     prefix: UnsafePointer<CChar>,
     accountNumber: UnsafePointer<CChar>,
     bankCode: UnsafePointer<CChar>
-) -> UnsafePointer<CChar> {
+) -> UnsafeMutablePointer<CChar>? {
     let prefixStr = String(cString: prefix)
     let accountNumberStr = String(cString: accountNumber)
     let bankCodeStr = String(cString: bankCode)
