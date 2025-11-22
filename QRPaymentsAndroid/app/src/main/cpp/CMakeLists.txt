@@ -9,13 +9,11 @@ add_library(qrpaymentsbridge SHARED
     swift_jni_bridge.c
 )
 
-# Import the pre-built Swift library
-add_library(QRPaymentsCore SHARED IMPORTED)
-set_target_properties(QRPaymentsCore PROPERTIES
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libQRPaymentsCore.so
-)
+# Add the jniLibs directory to the library search path for build-time linking
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../jniLibs/${ANDROID_ABI})
 
-# Link against the Swift library
+# Link against the Swift library BY NAME ONLY (not absolute path)
+# This allows Android's runtime linker to find it in the same directory
 target_link_libraries(qrpaymentsbridge
     QRPaymentsCore
     log
