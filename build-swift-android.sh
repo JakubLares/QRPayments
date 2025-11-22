@@ -17,8 +17,7 @@ echo "📦 Building with Swift 6.2 Android SDK..."
 swiftly run swift build \
     -c debug \
     --triple aarch64-unknown-linux-android28 \
-    --product QRPaymentsCore \
-    -Xswiftc -static-stdlib
+    --product QRPaymentsCore
 
 # Find the built library
 SO_FILE=$(find .build -name "libQRPaymentsCore.so" | grep "aarch64.*debug" | head -1)
