@@ -4,6 +4,15 @@
 
 The JNI bridge infrastructure is **fully implemented and ready**. The only missing piece is the Swift library binary file, which must be built on a Mac with Swift 6.2+ installed.
 
+### 🔧 Integration Approach: Manual JNI Bridge
+
+We're using a **manual JNI bridge** approach with:
+- Swift `@_cdecl` exports (C-compatible functions)
+- Custom C JNI wrapper
+- Android NDK CMake build
+
+**Note:** We are NOT using `swift-java` for automatic binding generation. The swift-java tool is primarily for calling Java FROM Swift, whereas we need to call Swift FROM Kotlin. Our manual approach gives us complete control over the JNI interface and avoids JDK architecture compatibility issues.
+
 ---
 
 ## ✅ Completed Components
