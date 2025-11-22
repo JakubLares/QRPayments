@@ -44,10 +44,13 @@ swiftly run swift build \
     --product QRPaymentsCore
 
 # Find the built library
-SO_FILE=$(find .build -name "libQRPaymentsCore.so" | grep "aarch64.*debug" | head -1)
+SO_FILE=$(find .build -name "libQRPaymentsCore.so" -type f | head -1)
 
 if [ -z "$SO_FILE" ]; then
     echo "❌ Error: libQRPaymentsCore.so not found in build output"
+    echo ""
+    echo "Build directory contents:"
+    find .build -name "*.so" -type f 2>/dev/null || echo "No .so files found"
     exit 1
 fi
 
