@@ -189,15 +189,24 @@ If you still see issues after cleanup:
 rm -rf ~/Library/org.swift.swiftpm/swift-sdks/*android*
 rm -rf ~/Library/org.swift.swiftpm/swift-sdks/*DEVELOPMENT*
 
-# Install Swift 6.0.3 (RECOMMENDED)
-swift sdk install \
-  https://github.com/finagolfin/swift-android-sdk/releases/download/6.0.3/swift-6.0.3-RELEASE-android-24-0.1.artifactbundle.tar.gz
+# Download Swift 6.0.3 SDK
+cd ~/Downloads
+curl -L -O https://github.com/finagolfin/swift-android-sdk/releases/download/6.0.3/swift-6.0.3-RELEASE-android-24-0.1.artifactbundle.tar.gz
+
+# Compute checksum (you'll need this for installation)
+swift package compute-checksum swift-6.0.3-RELEASE-android-24-0.1.artifactbundle.tar.gz
+
+# Install with checksum (replace CHECKSUM with the output from above)
+swift sdk install swift-6.0.3-RELEASE-android-24-0.1.artifactbundle.tar.gz --checksum CHECKSUM
+
+# Example (if checksum is abc123...):
+# swift sdk install swift-6.0.3-RELEASE-android-24-0.1.artifactbundle.tar.gz --checksum abc123...
 
 # Verify
 swift sdk list  # Should show ONLY ONE Android SDK
 
 # Build
-cd QRPaymentsCore
+cd ~/Development/QRPayments/QRPaymentsCore
 rm -rf .build
 swift build --swift-sdk swift-6.0.3-RELEASE-android-24-0.1 -c release
 ```
