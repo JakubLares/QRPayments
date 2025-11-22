@@ -52,6 +52,23 @@ if [ -z "$ANDROID_SDK" ]; then
     fi
 else
     echo -e "${GREEN}✓ Swift SDK for Android found: ${ANDROID_SDK}${NC}"
+
+    # Warn about development snapshots
+    if [[ "$ANDROID_SDK" == *"DEVELOPMENT-SNAPSHOT"* ]] || [[ "$ANDROID_SDK" == *"SNAPSHOT"* ]]; then
+        echo -e "${YELLOW}⚠️  WARNING: You are using a development snapshot!${NC}"
+        echo -e "${YELLOW}   Development snapshots may be unstable and contain bugs.${NC}"
+        echo ""
+        echo "If you encounter build errors (especially in Swift standard library):"
+        echo "1. Download a STABLE Swift 6.0+ release from https://www.swift.org/install/"
+        echo "2. Install a stable Swift SDK for Android"
+        echo "3. Avoid using nightly/development snapshots for production builds"
+        echo ""
+        read -p "Continue with development snapshot anyway? (y/n) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    fi
 fi
 echo ""
 
