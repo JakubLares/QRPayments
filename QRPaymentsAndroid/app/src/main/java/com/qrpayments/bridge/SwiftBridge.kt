@@ -8,9 +8,19 @@ import com.qrpayments.data.BankAccount
  */
 object SwiftBridge {
 
+    private const val TAG = "SwiftBridge"
+    private var isSwiftAvailable = false
+
     init {
-        // Load the Swift library
-        System.loadLibrary("QRPaymentsCore")
+        try {
+            // Try to load the Swift library
+            System.loadLibrary("QRPaymentsCore")
+            android.util.Log.d(TAG, "✅ Swift library loaded successfully!")
+            isSwiftAvailable = true
+        } catch (e: UnsatisfiedLinkError) {
+            android.util.Log.w(TAG, "⚠️ Swift library not available, using Kotlin fallback", e)
+            isSwiftAvailable = false
+        }
     }
 
     /**
@@ -45,10 +55,16 @@ object SwiftBridge {
         variableSymbol: String?,
         message: String?
     ): String {
-        return try {
-            nativeGenerateSPAYD(prefix, accountNumber, bankCode, amount, variableSymbol, message)
-        } catch (e: UnsatisfiedLinkError) {
-            // Fallback to Kotlin implementation if Swift library not available
+        return if (isSwiftAvailable) {
+            try {
+                android.util.Log.d(TAG, "🚀 Calling Swift implementation via JNI")
+                nativeGenerateSPAYD(prefix, accountNumber, bankCode, amount, variableSymbol, message)
+            } catch (e: UnsatisfiedLinkError) {
+                android.util.Log.w(TAG, "⚠️ Swift call failed, using Kotlin fallback", e)
+                generateSPAYDKotlin(prefix, accountNumber, bankCode, amount, variableSymbol, message)
+            }
+        } else {
+            android.util.Log.d(TAG, "📱 Using Kotlin implementation (Swift not available)")
             generateSPAYDKotlin(prefix, accountNumber, bankCode, amount, variableSymbol, message)
         }
     }
