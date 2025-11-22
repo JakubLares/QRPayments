@@ -47,6 +47,17 @@ android {
         }
     }
 
+    // Prevent stripping Swift libraries to avoid DT_HASH/DT_GNU_HASH corruption
+    // Issue: https://github.com/finagolfin/swift-android-sdk/issues/67
+    // Stripping Swift libraries after patchelf modifications corrupts their hash tables
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+            // Don't strip any .so files to preserve hash tables
+            keepDebugSymbols.add("**/*.so")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
