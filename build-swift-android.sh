@@ -81,11 +81,15 @@ echo "📦 Copying Swift runtime libraries..."
 
 # finagolfin's SDK stores runtime libs in the SDK bundle, not build output
 # Find the SDK installation directory
-SDK_PATH=$(swiftly run swift sdk list | grep "$ANDROID_SDK" | head -1 | sed 's/.*at //')
+SDK_LIST_OUTPUT=$(swiftly run swift sdk list 2>&1 | grep "$ANDROID_SDK" | grep " at " | head -1)
+
+if [ -n "$SDK_LIST_OUTPUT" ]; then
+    SDK_PATH=$(echo "$SDK_LIST_OUTPUT" | sed -n 's/.*at \(.*\)/\1/p')
+fi
 
 if [ -z "$SDK_PATH" ]; then
-    echo "⚠️  Could not determine SDK path, trying default location..."
-    SDK_PATH="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle"
+    echo "⚠️  Could not determine SDK path from swiftly, trying default location..."
+    SDK_PATH="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle/swift-6.2-release-android-24-sdk"
 fi
 
 echo "Looking for Swift runtime libraries in SDK: $SDK_PATH"
