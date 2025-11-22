@@ -20,9 +20,27 @@ fi
 
 # Build using swiftly
 echo "📦 Building with Swift 6.2 Android SDK..."
+
+# Detect the installed Android SDK
+ANDROID_SDK=$(swiftly run swift sdk list | grep "aarch64-unknown-linux-android" | head -1 | awk '{print $1}')
+
+if [ -z "$ANDROID_SDK" ]; then
+    echo "❌ Error: Swift Android SDK not found!"
+    echo ""
+    echo "Available SDKs:"
+    swiftly run swift sdk list
+    echo ""
+    echo "Please install Swift Android SDK 6.2:"
+    echo "Download from: https://github.com/finagolfin/swift-android-sdk/releases"
+    exit 1
+fi
+
+echo "Using Android SDK: $ANDROID_SDK"
+echo ""
+
 swiftly run swift build \
+    --swift-sdk "$ANDROID_SDK" \
     -c debug \
-    --triple aarch64-unknown-linux-android28 \
     --product QRPaymentsCore
 
 # Find the built library
