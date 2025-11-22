@@ -8,6 +8,7 @@
 //
 
 import SwiftUI
+import QRPaymentsCore  // Shared Swift package for business logic
 
 // Wrapper for QR code data to use with fullScreenCover(item:)
 struct QRCodeData: Identifiable {
