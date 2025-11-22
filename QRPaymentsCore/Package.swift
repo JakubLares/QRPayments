@@ -7,9 +7,9 @@ let package = Package(
     name: "QRPaymentsCore",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14),
-        // Android support via Linux platform
-        .linux
+        .macOS(.v14)
+        // Note: No need to specify Linux/Android platform
+        // Cross-platform packages work on Linux by default
     ],
     products: [
         // Library that can be static or dynamic based on context
