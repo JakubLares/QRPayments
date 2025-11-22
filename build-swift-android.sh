@@ -78,15 +78,30 @@ echo ""
 
 # Copy Swift runtime libraries
 echo "📦 Copying Swift runtime libraries..."
-SWIFT_LIBS_DIR=$(dirname "$SO_FILE")
 
-# Find and copy all Swift standard library dependencies
-SWIFT_RUNTIME_LIBS=$(find "$SWIFT_LIBS_DIR" -name "libswift*.so" -type f)
+# finagolfin's SDK stores runtime libs in the SDK bundle, not build output
+# Find the SDK installation directory
+SDK_PATH=$(swiftly run swift sdk list | grep "$ANDROID_SDK" | head -1 | sed 's/.*at //')
 
-if [ -z "$SWIFT_RUNTIME_LIBS" ]; then
-    echo "⚠️  Warning: No Swift runtime libraries found in $SWIFT_LIBS_DIR"
-    echo "    Checking parent directories..."
-    SWIFT_RUNTIME_LIBS=$(find .build -name "libswift*.so" -type f | grep -E "aarch64|arm64" | head -20)
+if [ -z "$SDK_PATH" ]; then
+    echo "⚠️  Could not determine SDK path, trying default location..."
+    SDK_PATH="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle"
+fi
+
+echo "Looking for Swift runtime libraries in SDK: $SDK_PATH"
+
+# Find Swift runtime libraries in the SDK
+SWIFT_RUNTIME_LIBS=""
+
+# Try common locations in finagolfin's SDK structure
+if [ -d "$SDK_PATH" ]; then
+    # Look for lib directory in SDK
+    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -name "libswift*.so" -type f | grep -E "aarch64|arm64" 2>/dev/null)
+
+    # If not found, try the swift-6.2-release-android-24-sdk subdirectory
+    if [ -z "$SWIFT_RUNTIME_LIBS" ]; then
+        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*/libswift*.so" -type f 2>/dev/null)
+    fi
 fi
 
 if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
@@ -96,13 +111,17 @@ if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
         cp "$lib" "$JNI_LIBS/$lib_name"
         COPIED_COUNT=$((COPIED_COUNT + 1))
     done
-    echo "✅ Copied $COPIED_COUNT Swift runtime libraries"
+    echo "✅ Copied $COPIED_COUNT Swift runtime libraries from SDK"
     echo ""
     echo "Swift runtime libraries:"
-    ls -lh "$JNI_LIBS"/libswift*.so | awk '{print "  " $9 " (" $5 ")"}'
+    ls -lh "$JNI_LIBS"/libswift*.so 2>/dev/null | awk '{print "  " $9 " (" $5 ")"}'
 else
-    echo "⚠️  Warning: Swift runtime libraries not found!"
-    echo "    The app may fail to load the Swift library at runtime."
+    echo "⚠️  Warning: Swift runtime libraries not found in SDK!"
+    echo "    Searched in: $SDK_PATH"
+    echo ""
+    echo "    Please manually copy Swift runtime libraries from:"
+    echo "    $SDK_PATH/usr/lib/swift/android/"
+    echo "    to: $JNI_LIBS/"
 fi
 echo ""
 
