@@ -118,40 +118,26 @@ SWIFT_RUNTIME_LIBS=""
 
 # Try common locations in finagolfin's SDK structure
 if [ -d "$SDK_PATH" ]; then
-    echo "🔍 Searching for Swift runtime libraries..."
-    echo "   Strategy 1: Looking for libswift*.so and libBlocksRuntime.so with aarch64/arm64 in path..."
+    echo "🔍 Searching for ALL runtime libraries in SDK (to avoid missing dependencies)..."
 
-    # Search for both libswift*.so and libBlocksRuntime.so
-    SWIFT_LIBS=$(find "$SDK_PATH" -name "libswift*.so" -type f 2>/dev/null | grep -E "aarch64|arm64")
-    BLOCKS_LIB=$(find "$SDK_PATH" -name "libBlocksRuntime.so" -type f 2>/dev/null | grep -E "aarch64|arm64")
-
-    # Combine the results
-    if [ -n "$SWIFT_LIBS" ]; then
-        SWIFT_RUNTIME_LIBS="$SWIFT_LIBS"
-    fi
-    if [ -n "$BLOCKS_LIB" ]; then
-        if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-            SWIFT_RUNTIME_LIBS="$SWIFT_RUNTIME_LIBS
-$BLOCKS_LIB"
-        else
-            SWIFT_RUNTIME_LIBS="$BLOCKS_LIB"
-        fi
-    fi
+    # Search for ALL .so files in aarch64/arm64 directories
+    # This ensures we don't miss any dependencies like libdispatch.so, libBlocksRuntime.so, etc.
+    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64")
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) libraries with Strategy 1"
+        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) runtime libraries"
     else
-        echo "   ⚠️  No libraries found with Strategy 1"
-        echo "   Strategy 2: Looking in usr/lib/swift/android/..."
-        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*" -type f \( -name "libswift*.so" -o -name "libBlocksRuntime.so" \) 2>/dev/null)
+        echo "   ⚠️  No libraries found with architecture filter, trying without filter..."
+        # Fallback: look in standard Swift lib directories
+        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*" -type f -name "*.so" 2>/dev/null)
 
         if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-            echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) libraries with Strategy 2"
+            echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) runtime libraries"
         else
-            echo "   ⚠️  No libraries found with Strategy 2"
+            echo "   ⚠️  No libraries found!"
             echo ""
             echo "   Let's see what's actually in the SDK directory:"
-            find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | head -20 || echo "   No .so files found"
+            find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | head -30 || echo "   No .so files found"
         fi
     fi
     echo ""
@@ -164,15 +150,15 @@ if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
         cp "$lib" "$JNI_LIBS/$lib_name"
         COPIED_COUNT=$((COPIED_COUNT + 1))
     done
-    echo "✅ Copied $COPIED_COUNT Swift runtime libraries from SDK"
+    echo "✅ Copied $COPIED_COUNT runtime libraries from SDK"
     echo ""
-    echo "Swift runtime libraries:"
-    ls -lh "$JNI_LIBS"/libswift*.so "$JNI_LIBS"/libBlocksRuntime.so 2>/dev/null | awk '{print "  " $9 " (" $5 ")"}'
+    echo "Runtime libraries (showing first 25):"
+    ls -lh "$JNI_LIBS"/*.so 2>/dev/null | grep -v "libQRPaymentsCore.so" | grep -v "libqrpaymentsbridge.so" | head -25 | awk '{print "  " $9 " (" $5 ")"}'
 else
-    echo "⚠️  Warning: Swift runtime libraries not found in SDK!"
+    echo "⚠️  Warning: Runtime libraries not found in SDK!"
     echo "    Searched in: $SDK_PATH"
     echo ""
-    echo "    Please manually copy Swift runtime libraries from:"
+    echo "    Please manually copy runtime libraries from:"
     echo "    $SDK_PATH/usr/lib/swift/android/"
     echo "    to: $JNI_LIBS/"
 fi
