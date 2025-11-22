@@ -37,11 +37,8 @@ Expected: `-rw-r--r-- ... 5.9M ... libQRPaymentsCore.so`
 
 Without `libQRPaymentsCore.so`:
 - CMake cannot build the JNI bridge (`libqrpaymentsbridge.so`)
-- The app will fall back to the Kotlin implementation
-- You'll see this in logcat:
-  ```
-  SwiftBridge: ⚠️ JNI bridge not available, using Kotlin fallback
-  ```
+- The Android app build will fail
+- Swift runtime libraries (~40 .so files, ~95MB) are also required
 
 ## See Also
 
