@@ -28,8 +28,8 @@ let package = Package(
         .target(
             name: "QRPaymentsCore",
             dependencies: [
-                .product(name: "JavaKit", package: "swift-java"),
-                .product(name: "JavaKitJar", package: "swift-java"),
+                .product(name: "SwiftJava", package: "swift-java"),
+                .product(name: "JavaTypes", package: "swift-java"),
             ],
             swiftSettings: [
                 // Android-specific compilation flag

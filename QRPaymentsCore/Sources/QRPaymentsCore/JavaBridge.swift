@@ -2,27 +2,27 @@
 //  JavaBridge.swift
 //  QRPaymentsCore
 //
-//  Java/Android bridge using swift-java's @JavaExport macro
-//  This automatically generates JNI bindings for calling from Java/Kotlin
+//  Java/Android bridge using swift-java's JNI interop
+//  Exports Swift functions to be callable from Java/Kotlin via JNI
 //
 
 import Foundation
-import JavaKit
+import SwiftJava
+import JavaTypes
 
 /// Java-friendly bridge for SPAYD generation
-/// Uses @JavaExport to automatically generate JNI wrappers
-@JavaClass("com.qrpayments.core.SPAYDGeneratorSwift")
+/// Exports Swift functions via JNI for calling from Java/Kotlin
 public class SPAYDGeneratorSwift {
 
     /// Generates SPAYD format string for Czech QR payment
-    /// @param prefix Account prefix (can be empty)
-    /// @param accountNumber Main account number
-    /// @param bankCode Bank code (4 digits)
-    /// @param amount Payment amount (can be null)
-    /// @param variableSymbol Variable symbol (can be null)
-    /// @param message Message for receiver (can be null)
-    /// @return SPAYD formatted string
-    @JavaMethod
+    /// - Parameters:
+    ///   - prefix: Account prefix (can be empty)
+    ///   - accountNumber: Main account number
+    ///   - bankCode: Bank code (4 digits)
+    ///   - amount: Payment amount (optional)
+    ///   - variableSymbol: Variable symbol (optional)
+    ///   - message: Message for receiver (optional)
+    /// - Returns: SPAYD formatted string
     public static func generateSPAYD(
         prefix: String,
         accountNumber: String,
@@ -42,11 +42,11 @@ public class SPAYDGeneratorSwift {
     }
 
     /// Converts Czech account format to IBAN
-    /// @param prefix Account prefix (can be empty)
-    /// @param accountNumber Main account number
-    /// @param bankCode Bank code (4 digits)
-    /// @return IBAN string (e.g., CZ6508000000192000145399)
-    @JavaMethod
+    /// - Parameters:
+    ///   - prefix: Account prefix (can be empty)
+    ///   - accountNumber: Main account number
+    ///   - bankCode: Bank code (4 digits)
+    /// - Returns: IBAN string (e.g., CZ6508000000192000145399)
     public static func convertToIBAN(
         prefix: String,
         accountNumber: String,
