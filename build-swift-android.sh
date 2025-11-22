@@ -22,7 +22,7 @@ fi
 echo "📦 Building with Swift 6.2 Android SDK..."
 
 # Detect the installed Android SDK
-ANDROID_SDK=$(swiftly run swift sdk list | grep "aarch64-unknown-linux-android" | head -1 | awk '{print $1}')
+ANDROID_SDK=$(swiftly run swift sdk list | grep -i "android" | head -1 | awk '{print $1}')
 
 if [ -z "$ANDROID_SDK" ]; then
     echo "❌ Error: Swift Android SDK not found!"
