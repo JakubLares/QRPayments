@@ -14,7 +14,6 @@
 		A1000005000000000000001 /* QRGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000005000000000000001 /* QRGenerationView.swift */; };
 		A1000007000000000000001 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000007000000000000001 /* QRCodeGenerator.swift */; };
 		A1000008000000000000001 /* EditAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000008000000000000001 /* EditAccountView.swift */; };
-		AB000001000000000000001 /* QRPaymentsCore in Frameworks */ = {isa = PBXBuildFile; productRef = AA000001000000000000001 /* QRPaymentsCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +33,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA000001000000000000001 /* QRPaymentsCore */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +126,9 @@
 			dependencies = (
 			);
 			name = QRPayments;
+			packageProductDependencies = (
+				AA000001000000000000001 /* QRPaymentsCore */,
+			);
 			productName = QRPayments;
 			productReference = A3000000000000000000001 /* QRPayments.app */;
 			productType = "com.apple.product-type.application";
