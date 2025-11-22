@@ -18,6 +18,14 @@ if [ -d ".build" ]; then
     rm -rf .build
 fi
 
+# Clean old runtime libraries from jniLibs (we're switching to static linking)
+JNI_LIBS_TEMP="../QRPaymentsAndroid/app/src/main/jniLibs/arm64-v8a"
+if [ -d "$JNI_LIBS_TEMP" ]; then
+    echo "🧹 Cleaning old runtime libraries..."
+    # Keep only our custom libraries, remove all runtime libs
+    find "$JNI_LIBS_TEMP" -name "*.so" ! -name "libQRPaymentsCore.so" ! -name "libqrpaymentsbridge.so" -delete 2>/dev/null || true
+fi
+
 # Build using swiftly
 echo "📦 Building with Swift 6.2 Android SDK..."
 
@@ -38,11 +46,28 @@ fi
 echo "Using Android SDK: $ANDROID_SDK"
 echo ""
 
-# Build for ARM64 (64-bit) explicitly
-# finagolfin's SDK defaults to armv7 (32-bit), so we need to specify the triple
+# Build for ARM64 (64-bit) explicitly with STATIC stdlib linking
+# Following official Swift Android examples pattern:
+# - Use -static-stdlib to embed Swift runtime in the .so file
+# - Specify resource directory for static Swift resources
+# - This eliminates need for copying 40+ runtime libraries
+
+# First, find the SDK path for resource directory
+SDK_LIST_OUTPUT_EARLY=$(swiftly run swift sdk list 2>&1 | grep "$ANDROID_SDK" | grep " at " | head -1)
+if [ -n "$SDK_LIST_OUTPUT_EARLY" ]; then
+    SDK_PATH_EARLY=$(echo "$SDK_LIST_OUTPUT_EARLY" | sed -n 's/.*at \(.*\)/\1/p')
+else
+    SDK_PATH_EARLY="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle/swift-6.2-release-android-24-sdk"
+fi
+
+RESOURCE_DIR="$SDK_PATH_EARLY/android-27d-sysroot/usr/lib/swift_static-aarch64"
+
 swiftly run swift build \
     --swift-sdk "$ANDROID_SDK" \
     --triple aarch64-unknown-linux-android29 \
+    -Xswiftc -static-stdlib \
+    -Xswiftc -resource-dir \
+    -Xswiftc "$RESOURCE_DIR" \
     -c debug \
     --product QRPaymentsCore
 
@@ -76,108 +101,45 @@ echo "✅ Library copied to: $JNI_LIBS/libQRPaymentsCore.so"
 ls -lh "$JNI_LIBS/libQRPaymentsCore.so"
 echo ""
 
-# Copy Swift runtime libraries
-echo "📦 Copying Swift runtime libraries..."
+# Copy C++ runtime library (ONLY library needed with static stdlib)
+# Following official Swift Android examples pattern - they use -static-stdlib
+# which embeds Swift runtime into the .so, so we only need libc++_shared.so
+echo "📦 Copying C++ runtime library..."
 echo ""
 
-# finagolfin's SDK stores runtime libs in the SDK bundle, not build output
-# Find the SDK installation directory
-echo "🔍 Detecting SDK installation path..."
+# Find SDK path for NDK sysroot
 SDK_LIST_OUTPUT=$(swiftly run swift sdk list 2>&1 | grep "$ANDROID_SDK" | grep " at " | head -1)
 
 if [ -n "$SDK_LIST_OUTPUT" ]; then
-    echo "   Found SDK list entry: $SDK_LIST_OUTPUT"
     SDK_PATH=$(echo "$SDK_LIST_OUTPUT" | sed -n 's/.*at \(.*\)/\1/p')
-    echo "   Extracted path: $SDK_PATH"
-fi
-
-if [ -z "$SDK_PATH" ]; then
-    echo "⚠️  Could not determine SDK path from swiftly, trying default location..."
+else
     SDK_PATH="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle/swift-6.2-release-android-24-sdk"
 fi
 
 echo "📂 SDK Path: $SDK_PATH"
 
-# Verify the directory exists
-if [ ! -d "$SDK_PATH" ]; then
-    echo "⚠️  SDK directory does not exist: $SDK_PATH"
-    echo ""
-    echo "Let's check what SDK directories are available:"
-    echo ""
-    if [ -d "$HOME/Library/org.swift.swiftpm/swift-sdks" ]; then
-        ls -la "$HOME/Library/org.swift.swiftpm/swift-sdks/" 2>/dev/null || true
-    else
-        echo "   $HOME/Library/org.swift.swiftpm/swift-sdks directory not found"
-    fi
-    echo ""
-fi
-echo ""
+# Look for libc++_shared.so in NDK sysroot
+NDK_LIB_PATH="$SDK_PATH/android-27d-sysroot/usr/lib/aarch64-linux-android/libc++_shared.so"
 
-# Find Swift runtime libraries in the SDK
-SWIFT_RUNTIME_LIBS=""
-
-# Try common locations in finagolfin's SDK structure
-if [ -d "$SDK_PATH" ]; then
-    echo "🔍 Searching for Swift runtime libraries in SDK..."
-    echo ""
-
-    # Show what directories are available for debugging
-    echo "   Swift-related directories in SDK:"
-    find "$SDK_PATH" -type d -name "*swift*" 2>/dev/null | grep -i "lib" | head -5
-    echo ""
-
-    # Copy ALL libraries from usr/lib/aarch64-linux-android (including FoundationICU)
-    # Following the pattern from official Swift Android examples:
-    # https://github.com/swiftlang/swift-android-examples/blob/main/hello-swift-java/build.gradle.kts
-    # They include "_FoundationICU" as a standard runtime library
-    echo "   Copying ALL runtime libraries from SDK (including FoundationICU, excluding only 32-bit libs)..."
-
-    # Find the aarch64-linux-android directory
-    ARCH_LIB_DIR=$(find "$SDK_PATH" -type d -path "*/usr/lib/aarch64-linux-android" 2>/dev/null | head -1)
-
-    if [ -n "$ARCH_LIB_DIR" ] && [ -d "$ARCH_LIB_DIR" ]; then
-        echo "   Found arch lib directory: $ARCH_LIB_DIR"
-
-        # Get ALL .so files (maxdepth 1 excludes 32/ subdirectory)
-        # Include FoundationICU as per official examples
-        SWIFT_RUNTIME_LIBS=$(find "$ARCH_LIB_DIR" -maxdepth 1 -type f -name "*.so" 2>/dev/null)
-    else
-        echo "   ⚠️  Could not find aarch64-linux-android directory, falling back to broader search..."
-        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64" | grep -v "/32/")
-    fi
-
-    if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) Swift runtime libraries"
-        echo ""
-        echo "   Sample libraries found:"
-        echo "$SWIFT_RUNTIME_LIBS" | head -5 | sed 's/^/     /'
-    else
-        echo "   ⚠️  No Swift libraries found!"
-        echo ""
-        echo "   Showing all .so files with aarch64/arm64 in path (first 20):"
-        find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64" | head -20 | sed 's/^/     /'
-    fi
-    echo ""
-fi
-
-if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-    COPIED_COUNT=0
-    for lib in $SWIFT_RUNTIME_LIBS; do
-        lib_name=$(basename "$lib")
-        cp "$lib" "$JNI_LIBS/$lib_name"
-        COPIED_COUNT=$((COPIED_COUNT + 1))
-    done
-    echo "✅ Copied $COPIED_COUNT runtime libraries from SDK"
-    echo ""
-    echo "Runtime libraries (showing first 25):"
-    ls -lh "$JNI_LIBS"/*.so 2>/dev/null | grep -v "libQRPaymentsCore.so" | grep -v "libqrpaymentsbridge.so" | head -25 | awk '{print "  " $9 " (" $5 ")"}'
+if [ -f "$NDK_LIB_PATH" ]; then
+    echo "✅ Found libc++_shared.so in NDK sysroot"
+    cp "$NDK_LIB_PATH" "$JNI_LIBS/libc++_shared.so"
+    echo "✅ Copied libc++_shared.so"
+    ls -lh "$JNI_LIBS/libc++_shared.so"
 else
-    echo "⚠️  Warning: Runtime libraries not found in SDK!"
-    echo "    Searched in: $SDK_PATH"
+    echo "⚠️  Warning: libc++_shared.so not found at: $NDK_LIB_PATH"
     echo ""
-    echo "    Please manually copy runtime libraries from:"
-    echo "    $SDK_PATH/usr/lib/swift/android/"
-    echo "    to: $JNI_LIBS/"
+    echo "Searching for libc++_shared.so in SDK..."
+    CPP_LIB=$(find "$SDK_PATH" -name "libc++_shared.so" -type f | grep aarch64 | head -1)
+    if [ -n "$CPP_LIB" ]; then
+        echo "✅ Found at: $CPP_LIB"
+        cp "$CPP_LIB" "$JNI_LIBS/libc++_shared.so"
+        echo "✅ Copied libc++_shared.so"
+        ls -lh "$JNI_LIBS/libc++_shared.so"
+    else
+        echo "❌ Error: libc++_shared.so not found in SDK!"
+        exit 1
+    fi
 fi
 echo ""
 
@@ -185,9 +147,13 @@ echo "=========================================="
 echo "✅ Build Complete!"
 echo "=========================================="
 echo ""
+echo "Built with STATIC stdlib linking (like official Swift Android examples)"
+echo "This embeds Swift runtime into libQRPaymentsCore.so"
+echo "Only libc++_shared.so is needed as external dependency"
+echo ""
 echo "Next steps:"
 echo "1. Open Android Studio"
 echo "2. Click Build → Rebuild Project"
 echo "3. CMake will build the JNI bridge (libqrpaymentsbridge.so)"
-echo "4. Run the app and check logcat for '✅ JNI bridge loaded successfully!'"
+echo "4. Run the app and check logcat for Swift initialization"
 echo ""
