@@ -22,6 +22,22 @@ android {
         ndk {
             abiFilters += listOf("arm64-v8a")
         }
+
+        // CMake configuration for JNI bridge
+        externalNativeBuild {
+            cmake {
+                cppFlags += ""
+                abiFilters += listOf("arm64-v8a")
+            }
+        }
+    }
+
+    // CMake path
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     // JNI libraries location
