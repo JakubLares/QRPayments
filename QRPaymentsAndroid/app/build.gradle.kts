@@ -120,6 +120,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Swift Library Integration (will be added via swift-java)
-    // TODO: Add swift-java generated bindings
+    // Swift Library Integration via Manual JNI Bridge
+    // Swift code is integrated using @_cdecl exports and C JNI bridge
+    // See: QRPaymentsCore/Sources/QRPaymentsCore/JavaBridge.swift
+    // See: app/src/main/cpp/swift_jni_bridge.c
 }
