@@ -118,27 +118,30 @@ SWIFT_RUNTIME_LIBS=""
 
 # Try common locations in finagolfin's SDK structure
 if [ -d "$SDK_PATH" ]; then
-    echo "🔍 Searching for ALL runtime libraries in SDK (to avoid missing dependencies)..."
+    echo "🔍 Searching for Swift runtime libraries in SDK..."
 
-    # Search for ALL .so files in aarch64/arm64 directories
-    # This ensures we don't miss any dependencies like libdispatch.so, libBlocksRuntime.so, etc.
-    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64")
+    # Look specifically in usr/lib/swift directory for aarch64 libraries
+    # This avoids copying Android system libraries that are already on the device
+    SWIFT_DIR=$(find "$SDK_PATH" -type d -path "*/usr/lib/swift/android*aarch64*" 2>/dev/null | head -1)
+
+    if [ -n "$SWIFT_DIR" ] && [ -d "$SWIFT_DIR" ]; then
+        echo "   Found Swift library directory: $SWIFT_DIR"
+        SWIFT_RUNTIME_LIBS=$(find "$SWIFT_DIR" -type f -name "*.so" 2>/dev/null)
+    fi
+
+    # If not found, try broader search in usr/lib/swift
+    if [ -z "$SWIFT_RUNTIME_LIBS" ]; then
+        echo "   Trying broader search in usr/lib/swift..."
+        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/*" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64")
+    fi
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) runtime libraries"
+        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) Swift runtime libraries"
     else
-        echo "   ⚠️  No libraries found with architecture filter, trying without filter..."
-        # Fallback: look in standard Swift lib directories
-        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*" -type f -name "*.so" 2>/dev/null)
-
-        if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
-            echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) runtime libraries"
-        else
-            echo "   ⚠️  No libraries found!"
-            echo ""
-            echo "   Let's see what's actually in the SDK directory:"
-            find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | head -30 || echo "   No .so files found"
-        fi
+        echo "   ⚠️  No Swift libraries found!"
+        echo ""
+        echo "   Let's see what Swift directories are available:"
+        find "$SDK_PATH" -type d -path "*/usr/lib/swift*" 2>/dev/null | head -10 || echo "   No Swift directories found"
     fi
     echo ""
 fi
