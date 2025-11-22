@@ -70,11 +70,40 @@ echo ""
 JNI_LIBS="../QRPaymentsAndroid/app/src/main/jniLibs/arm64-v8a"
 mkdir -p "$JNI_LIBS"
 
-echo "📦 Copying to Android project..."
+echo "📦 Copying Swift library to Android project..."
 cp "$SO_FILE" "$JNI_LIBS/libQRPaymentsCore.so"
-
 echo "✅ Library copied to: $JNI_LIBS/libQRPaymentsCore.so"
 ls -lh "$JNI_LIBS/libQRPaymentsCore.so"
+echo ""
+
+# Copy Swift runtime libraries
+echo "📦 Copying Swift runtime libraries..."
+SWIFT_LIBS_DIR=$(dirname "$SO_FILE")
+
+# Find and copy all Swift standard library dependencies
+SWIFT_RUNTIME_LIBS=$(find "$SWIFT_LIBS_DIR" -name "libswift*.so" -type f)
+
+if [ -z "$SWIFT_RUNTIME_LIBS" ]; then
+    echo "⚠️  Warning: No Swift runtime libraries found in $SWIFT_LIBS_DIR"
+    echo "    Checking parent directories..."
+    SWIFT_RUNTIME_LIBS=$(find .build -name "libswift*.so" -type f | grep -E "aarch64|arm64" | head -20)
+fi
+
+if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
+    COPIED_COUNT=0
+    for lib in $SWIFT_RUNTIME_LIBS; do
+        lib_name=$(basename "$lib")
+        cp "$lib" "$JNI_LIBS/$lib_name"
+        COPIED_COUNT=$((COPIED_COUNT + 1))
+    done
+    echo "✅ Copied $COPIED_COUNT Swift runtime libraries"
+    echo ""
+    echo "Swift runtime libraries:"
+    ls -lh "$JNI_LIBS"/libswift*.so | awk '{print "  " $9 " (" $5 ")"}'
+else
+    echo "⚠️  Warning: Swift runtime libraries not found!"
+    echo "    The app may fail to load the Swift library at runtime."
+fi
 echo ""
 
 echo "=========================================="
