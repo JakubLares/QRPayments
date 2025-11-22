@@ -119,29 +119,33 @@ SWIFT_RUNTIME_LIBS=""
 # Try common locations in finagolfin's SDK structure
 if [ -d "$SDK_PATH" ]; then
     echo "🔍 Searching for Swift runtime libraries in SDK..."
+    echo ""
 
-    # Look specifically in usr/lib/swift directory for aarch64 libraries
-    # This avoids copying Android system libraries that are already on the device
-    SWIFT_DIR=$(find "$SDK_PATH" -type d -path "*/usr/lib/swift/android*aarch64*" 2>/dev/null | head -1)
+    # Show what directories are available for debugging
+    echo "   Swift-related directories in SDK:"
+    find "$SDK_PATH" -type d -name "*swift*" 2>/dev/null | grep -i "lib" | head -5
+    echo ""
 
-    if [ -n "$SWIFT_DIR" ] && [ -d "$SWIFT_DIR" ]; then
-        echo "   Found Swift library directory: $SWIFT_DIR"
-        SWIFT_RUNTIME_LIBS=$(find "$SWIFT_DIR" -type f -name "*.so" 2>/dev/null)
-    fi
-
-    # If not found, try broader search in usr/lib/swift
-    if [ -z "$SWIFT_RUNTIME_LIBS" ]; then
-        echo "   Trying broader search in usr/lib/swift..."
-        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/*" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64")
-    fi
+    # Search for Swift, dispatch, and Blocks libraries specifically
+    # These are the runtime dependencies we need
+    echo "   Searching for required runtime libraries..."
+    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f \( \
+        -name "libswift*.so" -o \
+        -name "libdispatch.so" -o \
+        -name "libBlocksRuntime.so" -o \
+        -name "lib_*.so" \
+        \) 2>/dev/null | grep -E "aarch64|arm64")
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
         echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) Swift runtime libraries"
+        echo ""
+        echo "   Sample libraries found:"
+        echo "$SWIFT_RUNTIME_LIBS" | head -5 | sed 's/^/     /'
     else
         echo "   ⚠️  No Swift libraries found!"
         echo ""
-        echo "   Let's see what Swift directories are available:"
-        find "$SDK_PATH" -type d -path "*/usr/lib/swift*" 2>/dev/null | head -10 || echo "   No Swift directories found"
+        echo "   Showing all .so files with aarch64/arm64 in path (first 20):"
+        find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64" | head -20 | sed 's/^/     /'
     fi
     echo ""
 fi
