@@ -126,14 +126,19 @@ if [ -d "$SDK_PATH" ]; then
     find "$SDK_PATH" -type d -name "*swift*" 2>/dev/null | grep -i "lib" | head -5
     echo ""
 
-    # Search for Swift, dispatch, and Blocks libraries specifically
-    # Exclude Foundation libraries (lib_Foundation*.so) - they're huge (39MB+) and not needed for basic Swift
-    echo "   Searching for required runtime libraries (excluding Foundation)..."
-    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f \( \
+    # Search for Swift, dispatch, Blocks, and Foundation libraries
+    # Exclude lib_FoundationICU.so (39MB) - too large and not needed for basic operations
+    echo "   Searching for required runtime libraries (excluding FoundationICU)..."
+    ALL_LIBS=$(find "$SDK_PATH" -type f \( \
         -name "libswift*.so" -o \
         -name "libdispatch.so" -o \
-        -name "libBlocksRuntime.so" \
+        -name "libBlocksRuntime.so" -o \
+        -name "libFoundation.so" -o \
+        -name "lib_*.so" \
         \) 2>/dev/null | grep -E "aarch64|arm64")
+
+    # Filter out the huge ICU library but keep other Foundation libs
+    SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -v "lib_FoundationICU.so")
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
         echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) Swift runtime libraries"
