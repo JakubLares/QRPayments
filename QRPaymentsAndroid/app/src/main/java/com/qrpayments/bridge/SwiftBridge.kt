@@ -60,25 +60,25 @@ object SwiftBridge {
 
     /**
      * Validates bank code (4 digits)
+     * TODO: Add JNI bridge call to Swift Validator when needed
      */
     fun isValidBankCode(code: String): Boolean {
-        // TODO: Replace with swift-java call to Swift Validator
         return code.length == 4 && code.all { it.isDigit() }
     }
 
     /**
      * Validates account number (up to 10 digits)
+     * TODO: Add JNI bridge call to Swift Validator when needed
      */
     fun isValidAccountNumber(number: String): Boolean {
-        // TODO: Replace with swift-java call to Swift Validator
         return number.isNotEmpty() && number.length <= 10 && number.all { it.isDigit() }
     }
 
     /**
      * Validates account prefix (optional, up to 6 digits)
+     * TODO: Add JNI bridge call to Swift Validator when needed
      */
     fun isValidPrefix(prefix: String): Boolean {
-        // TODO: Replace with swift-java call to Swift Validator
         if (prefix.isEmpty()) return true
         return prefix.length <= 6 && prefix.all { it.isDigit() }
     }
