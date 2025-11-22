@@ -18,13 +18,6 @@ if [ -d ".build" ]; then
     rm -rf .build
 fi
 
-# Clean old runtime libraries from jniLibs (we're switching to static linking)
-JNI_LIBS_TEMP="../QRPaymentsAndroid/app/src/main/jniLibs/arm64-v8a"
-if [ -d "$JNI_LIBS_TEMP" ]; then
-    echo "🧹 Cleaning old runtime libraries..."
-    # Keep only our custom libraries, remove all runtime libs
-    find "$JNI_LIBS_TEMP" -name "*.so" ! -name "libQRPaymentsCore.so" ! -name "libqrpaymentsbridge.so" -delete 2>/dev/null || true
-fi
 
 # Build using swiftly
 echo "📦 Building with Swift 6.2 Android SDK..."
@@ -46,28 +39,14 @@ fi
 echo "Using Android SDK: $ANDROID_SDK"
 echo ""
 
-# Build for ARM64 (64-bit) explicitly with STATIC stdlib linking
-# Following official Swift Android examples pattern:
-# - Use -static-stdlib to embed Swift runtime in the .so file
-# - Specify resource directory for static Swift resources
-# - This eliminates need for copying 40+ runtime libraries
-
-# First, find the SDK path for resource directory
-SDK_LIST_OUTPUT_EARLY=$(swiftly run swift sdk list 2>&1 | grep "$ANDROID_SDK" | grep " at " | head -1)
-if [ -n "$SDK_LIST_OUTPUT_EARLY" ]; then
-    SDK_PATH_EARLY=$(echo "$SDK_LIST_OUTPUT_EARLY" | sed -n 's/.*at \(.*\)/\1/p')
-else
-    SDK_PATH_EARLY="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle/swift-6.2-release-android-24-sdk"
-fi
-
-RESOURCE_DIR="$SDK_PATH_EARLY/android-27d-sysroot/usr/lib/swift_static-aarch64"
-
+# Build for ARM64 (64-bit) with DYNAMIC linking
+# NOTE: Static stdlib linking doesn't work for shared libraries (.so files) on Android
+# It only works for executables. Since we're building libQRPaymentsCore.so for JNI,
+# we MUST use dynamic linking and ship all Swift runtime libraries with the APK.
+# Source: https://forums.swift.org/t/android-link-failures-with-static-swift-stdlib/61853
 swiftly run swift build \
     --swift-sdk "$ANDROID_SDK" \
     --triple aarch64-unknown-linux-android29 \
-    -Xswiftc -static-stdlib \
-    -Xswiftc -resource-dir \
-    -Xswiftc "$RESOURCE_DIR" \
     -c debug \
     --product QRPaymentsCore
 
@@ -101,45 +80,72 @@ echo "✅ Library copied to: $JNI_LIBS/libQRPaymentsCore.so"
 ls -lh "$JNI_LIBS/libQRPaymentsCore.so"
 echo ""
 
-# Copy C++ runtime library (ONLY library needed with static stdlib)
-# Following official Swift Android examples pattern - they use -static-stdlib
-# which embeds Swift runtime into the .so, so we only need libc++_shared.so
-echo "📦 Copying C++ runtime library..."
+# Copy Swift runtime libraries (ALL libraries - dynamic linking required for .so files)
+echo "📦 Copying Swift runtime libraries..."
 echo ""
 
-# Find SDK path for NDK sysroot
+# Find the SDK installation directory
+echo "🔍 Detecting SDK installation path..."
 SDK_LIST_OUTPUT=$(swiftly run swift sdk list 2>&1 | grep "$ANDROID_SDK" | grep " at " | head -1)
 
 if [ -n "$SDK_LIST_OUTPUT" ]; then
+    echo "   Found SDK list entry: $SDK_LIST_OUTPUT"
     SDK_PATH=$(echo "$SDK_LIST_OUTPUT" | sed -n 's/.*at \(.*\)/\1/p')
-else
+    echo "   Extracted path: $SDK_PATH"
+fi
+
+if [ -z "$SDK_PATH" ]; then
+    echo "⚠️  Could not determine SDK path from swiftly, trying default location..."
     SDK_PATH="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle/swift-6.2-release-android-24-sdk"
 fi
 
 echo "📂 SDK Path: $SDK_PATH"
+echo ""
 
-# Look for libc++_shared.so in NDK sysroot
-NDK_LIB_PATH="$SDK_PATH/android-27d-sysroot/usr/lib/aarch64-linux-android/libc++_shared.so"
+# Find Swift runtime libraries in the SDK
+# Copy ALL libraries from usr/lib/aarch64-linux-android (including FoundationICU)
+# This is required for dynamic linking - we cannot use static linking for .so files
+SWIFT_RUNTIME_LIBS=""
 
-if [ -f "$NDK_LIB_PATH" ]; then
-    echo "✅ Found libc++_shared.so in NDK sysroot"
-    cp "$NDK_LIB_PATH" "$JNI_LIBS/libc++_shared.so"
-    echo "✅ Copied libc++_shared.so"
-    ls -lh "$JNI_LIBS/libc++_shared.so"
-else
-    echo "⚠️  Warning: libc++_shared.so not found at: $NDK_LIB_PATH"
-    echo ""
-    echo "Searching for libc++_shared.so in SDK..."
-    CPP_LIB=$(find "$SDK_PATH" -name "libc++_shared.so" -type f | grep aarch64 | head -1)
-    if [ -n "$CPP_LIB" ]; then
-        echo "✅ Found at: $CPP_LIB"
-        cp "$CPP_LIB" "$JNI_LIBS/libc++_shared.so"
-        echo "✅ Copied libc++_shared.so"
-        ls -lh "$JNI_LIBS/libc++_shared.so"
+if [ -d "$SDK_PATH" ]; then
+    echo "🔍 Searching for Swift runtime libraries..."
+
+    # Find the aarch64-linux-android directory
+    ARCH_LIB_DIR=$(find "$SDK_PATH" -type d -path "*/usr/lib/aarch64-linux-android" 2>/dev/null | head -1)
+
+    if [ -n "$ARCH_LIB_DIR" ] && [ -d "$ARCH_LIB_DIR" ]; then
+        echo "   ✅ Found arch lib directory: $ARCH_LIB_DIR"
+
+        # Get ALL .so files (maxdepth 1 excludes 32/ subdirectory)
+        # Include ALL libraries including FoundationICU for complete Swift runtime support
+        SWIFT_RUNTIME_LIBS=$(find "$ARCH_LIB_DIR" -maxdepth 1 -type f -name "*.so" 2>/dev/null)
     else
-        echo "❌ Error: libc++_shared.so not found in SDK!"
-        exit 1
+        echo "   ⚠️  Could not find aarch64-linux-android directory, falling back to broader search..."
+        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64" | grep -v "/32/")
     fi
+
+    if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
+        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) Swift runtime libraries"
+        echo ""
+    fi
+fi
+
+if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
+    echo "📦 Copying runtime libraries to jniLibs..."
+    COPIED_COUNT=0
+    for lib in $SWIFT_RUNTIME_LIBS; do
+        lib_name=$(basename "$lib")
+        cp "$lib" "$JNI_LIBS/$lib_name"
+        COPIED_COUNT=$((COPIED_COUNT + 1))
+    done
+    echo "✅ Copied $COPIED_COUNT runtime libraries"
+    echo ""
+    echo "Libraries (showing first 20):"
+    ls -lh "$JNI_LIBS"/*.so 2>/dev/null | grep -v "libQRPaymentsCore.so" | grep -v "libqrpaymentsbridge.so" | head -20 | awk '{print "  " $9 " (" $5 ")"}'
+else
+    echo "❌ Error: Runtime libraries not found in SDK!"
+    echo "    Searched in: $SDK_PATH"
+    exit 1
 fi
 echo ""
 
@@ -147,13 +153,15 @@ echo "=========================================="
 echo "✅ Build Complete!"
 echo "=========================================="
 echo ""
-echo "Built with STATIC stdlib linking (like official Swift Android examples)"
-echo "This embeds Swift runtime into libQRPaymentsCore.so"
-echo "Only libc++_shared.so is needed as external dependency"
+echo "Built with DYNAMIC stdlib linking (required for .so files)"
+echo "All Swift runtime libraries included (~40 libraries, ~95MB)"
+echo ""
+echo "⚠️  Note: Static linking doesn't work for shared libraries on Android"
+echo "Source: https://forums.swift.org/t/android-link-failures-with-static-swift-stdlib/61853"
 echo ""
 echo "Next steps:"
 echo "1. Open Android Studio"
 echo "2. Click Build → Rebuild Project"
 echo "3. CMake will build the JNI bridge (libqrpaymentsbridge.so)"
-echo "4. Run the app and check logcat for Swift initialization"
+echo "4. Run the app and check logcat for Swift library loading"
 echo ""
