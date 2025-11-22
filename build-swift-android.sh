@@ -38,13 +38,21 @@ fi
 echo "Using Android SDK: $ANDROID_SDK"
 echo ""
 
+# Build for ARM64 (64-bit) explicitly
+# finagolfin's SDK defaults to armv7 (32-bit), so we need to specify the triple
 swiftly run swift build \
     --swift-sdk "$ANDROID_SDK" \
+    --triple aarch64-unknown-linux-android29 \
     -c debug \
     --product QRPaymentsCore
 
-# Find the built library
-SO_FILE=$(find .build -name "libQRPaymentsCore.so" -type f | head -1)
+# Find the built library (ARM64 variant)
+SO_FILE=$(find .build -name "libQRPaymentsCore.so" -type f | grep -E "aarch64|arm64" | head -1)
+
+# Fallback to any .so if ARM64 not found
+if [ -z "$SO_FILE" ]; then
+    SO_FILE=$(find .build -name "libQRPaymentsCore.so" -type f | head -1)
+fi
 
 if [ -z "$SO_FILE" ]; then
     echo "❌ Error: libQRPaymentsCore.so not found in build output"
