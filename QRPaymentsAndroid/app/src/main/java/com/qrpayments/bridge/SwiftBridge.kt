@@ -13,12 +13,12 @@ object SwiftBridge {
 
     init {
         try {
-            // Try to load the Swift library
-            System.loadLibrary("QRPaymentsCore")
-            android.util.Log.d(TAG, "✅ Swift library loaded successfully!")
+            // Load the JNI bridge library (which links to Swift library)
+            System.loadLibrary("qrpaymentsbridge")
+            android.util.Log.d(TAG, "✅ JNI bridge loaded successfully!")
             isSwiftAvailable = true
         } catch (e: UnsatisfiedLinkError) {
-            android.util.Log.w(TAG, "⚠️ Swift library not available, using Kotlin fallback", e)
+            android.util.Log.w(TAG, "⚠️ JNI bridge not available, using Kotlin fallback", e)
             isSwiftAvailable = false
         }
     }
