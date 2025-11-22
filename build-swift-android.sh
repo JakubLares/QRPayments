@@ -119,15 +119,31 @@ SWIFT_RUNTIME_LIBS=""
 # Try common locations in finagolfin's SDK structure
 if [ -d "$SDK_PATH" ]; then
     echo "🔍 Searching for Swift runtime libraries..."
-    echo "   Strategy 1: Looking for libswift*.so with aarch64/arm64 in path..."
-    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -name "libswift*.so" -type f 2>/dev/null | grep -E "aarch64|arm64")
+    echo "   Strategy 1: Looking for libswift*.so and libBlocksRuntime.so with aarch64/arm64 in path..."
+
+    # Search for both libswift*.so and libBlocksRuntime.so
+    SWIFT_LIBS=$(find "$SDK_PATH" -name "libswift*.so" -type f 2>/dev/null | grep -E "aarch64|arm64")
+    BLOCKS_LIB=$(find "$SDK_PATH" -name "libBlocksRuntime.so" -type f 2>/dev/null | grep -E "aarch64|arm64")
+
+    # Combine the results
+    if [ -n "$SWIFT_LIBS" ]; then
+        SWIFT_RUNTIME_LIBS="$SWIFT_LIBS"
+    fi
+    if [ -n "$BLOCKS_LIB" ]; then
+        if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
+            SWIFT_RUNTIME_LIBS="$SWIFT_RUNTIME_LIBS
+$BLOCKS_LIB"
+        else
+            SWIFT_RUNTIME_LIBS="$BLOCKS_LIB"
+        fi
+    fi
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
         echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) libraries with Strategy 1"
     else
         echo "   ⚠️  No libraries found with Strategy 1"
         echo "   Strategy 2: Looking in usr/lib/swift/android/..."
-        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*/libswift*.so" -type f 2>/dev/null)
+        SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*" -type f \( -name "libswift*.so" -o -name "libBlocksRuntime.so" \) 2>/dev/null)
 
         if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
             echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) libraries with Strategy 2"
@@ -151,7 +167,7 @@ if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
     echo "✅ Copied $COPIED_COUNT Swift runtime libraries from SDK"
     echo ""
     echo "Swift runtime libraries:"
-    ls -lh "$JNI_LIBS"/libswift*.so 2>/dev/null | awk '{print "  " $9 " (" $5 ")"}'
+    ls -lh "$JNI_LIBS"/libswift*.so "$JNI_LIBS"/libBlocksRuntime.so 2>/dev/null | awk '{print "  " $9 " (" $5 ")"}'
 else
     echo "⚠️  Warning: Swift runtime libraries not found in SDK!"
     echo "    Searched in: $SDK_PATH"
