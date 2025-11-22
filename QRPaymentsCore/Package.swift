@@ -27,9 +27,8 @@ let package = Package(
                 // Android-specific compilation flag
                 // Android uses Linux kernel, so we check for .linux platform
                 // This activates when cross-compiling from macOS to Android
-                .define("ANDROID", .when(platforms: [.linux])),
-                // Use Swift 6 language mode for better compatibility
-                .enableUpcomingFeature("StrictConcurrency")
+                .define("ANDROID", .when(platforms: [.linux]))
+                // Note: StrictConcurrency is already enabled by default in Swift 6
             ]),
         .testTarget(
             name: "QRPaymentsCoreTests",
