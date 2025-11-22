@@ -4,12 +4,27 @@
 
 You're seeing warnings like:
 ```
-warning: multiple Swift SDKs match ID `swift-6.2-RELEASE-android-24-0.1`
+warning: multiple Swift SDKs match ID `swift-6.2-RELEASE-android-24-0.1` and host triple arm64-apple-macosx16.0, selected one at /Users/jakublares/Library/org.swift.swiftpm/swift-sdks/swift-6.2-RELEASE-android-24-0.1.artifactbundle/swift-6.2-release-android-24-sdk
 ```
 
 This means you have duplicate SDK installations, likely from:
 1. Installing the same SDK multiple times
 2. Both the old development snapshot AND the new 6.2 release
+3. Corrupted or partial installations
+
+## Additional Issue: ~Copyable Error in Swift 6.2 SDK
+
+If you see this error:
+```
+error: cannot suppress '~Copyable' on generic parameter 'Wrapped' defined in outer scope
+```
+
+This is a **bug in the Swift 6.2 SDK for Android** (specifically in the x86_64 variant).
+
+**Solution: Use Swift 6.0.3 instead** (more stable):
+- https://github.com/finagolfin/swift-android-sdk/releases/tag/6.0.3
+
+See "Recommended SDK Version" section below for installation instructions.
 
 ## Quick Fix: Clean Up Duplicates
 
@@ -165,13 +180,18 @@ If you still see issues after cleanup:
 
 ---
 
-**TL;DR:**
+## Recommended SDK Version
+
+**Due to bugs in Swift 6.2**, use **Swift 6.0.3** instead (more stable):
+
 ```bash
 # Clean slate
 rm -rf ~/Library/org.swift.swiftpm/swift-sdks/*android*
+rm -rf ~/Library/org.swift.swiftpm/swift-sdks/*DEVELOPMENT*
 
-# Fresh install
-swift sdk install https://github.com/finagolfin/swift-android-sdk/releases/download/6.2/swift-6.2-RELEASE-android-24-0.1.artifactbundle.tar.gz --checksum c26ebfd4e32c0ca1beabcc45729b62042da57ee76d7d043f63f2235da90dc491
+# Install Swift 6.0.3 (RECOMMENDED)
+swift sdk install \
+  https://github.com/finagolfin/swift-android-sdk/releases/download/6.0.3/swift-6.0.3-RELEASE-android-24-0.1.artifactbundle.tar.gz
 
 # Verify
 swift sdk list  # Should show ONLY ONE Android SDK
@@ -179,5 +199,17 @@ swift sdk list  # Should show ONLY ONE Android SDK
 # Build
 cd QRPaymentsCore
 rm -rf .build
-swift build --swift-sdk swift-6.2-RELEASE-android-24-0.1 -c release
+swift build --swift-sdk swift-6.0.3-RELEASE-android-24-0.1 -c release
+```
+
+**Why 6.0.3 instead of 6.2?**
+- Swift 6.2 has bugs in the standard library (~Copyable errors)
+- Swift 6.0.3 is more stable and tested
+- Source: https://github.com/finagolfin/swift-android-sdk/releases
+
+## TL;DR (Old Swift 6.2 - Has Bugs)
+
+```bash
+# NOT RECOMMENDED - Swift 6.2 has ~Copyable bugs
+# Use 6.0.3 instead (see above)
 ```
