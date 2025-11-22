@@ -126,22 +126,25 @@ if [ -d "$SDK_PATH" ]; then
     find "$SDK_PATH" -type d -name "*swift*" 2>/dev/null | grep -i "lib" | head -5
     echo ""
 
-    # Copy ALL libraries from usr/lib/aarch64-linux-android to avoid missing dependencies
-    # Only exclude lib_FoundationICU.so (39MB) which is too large
-    echo "   Searching for ALL runtime libraries in usr/lib/aarch64-linux-android (excluding FoundationICU)..."
+    # Copy Swift and Foundation libraries from usr/lib/aarch64-linux-android
+    # Exclude: lib_FoundationICU.so (39MB), Android system libs, 32-bit libs
+    echo "   Searching for Swift/Foundation runtime libraries (excluding system libs and FoundationICU)..."
 
     # Find the aarch64-linux-android directory
     ARCH_LIB_DIR=$(find "$SDK_PATH" -type d -path "*/usr/lib/aarch64-linux-android" 2>/dev/null | head -1)
 
     if [ -n "$ARCH_LIB_DIR" ] && [ -d "$ARCH_LIB_DIR" ]; then
         echo "   Found arch lib directory: $ARCH_LIB_DIR"
-        # Get all .so files and exclude only the huge ICU library
-        ALL_LIBS=$(find "$ARCH_LIB_DIR" -type f -name "*.so" 2>/dev/null)
-        SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -v "lib_FoundationICU.so")
+
+        # Get all .so files, excluding 32/ subdirectory
+        ALL_LIBS=$(find "$ARCH_LIB_DIR" -maxdepth 1 -type f -name "*.so" 2>/dev/null)
+
+        # Keep only Swift and Foundation libraries, exclude system libs and ICU
+        SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -E "(libswift|libFoundation|lib_|libdispatch|libBlocks)" | grep -v "lib_FoundationICU.so")
     else
         echo "   ⚠️  Could not find aarch64-linux-android directory, falling back to broader search..."
         ALL_LIBS=$(find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | grep -E "aarch64|arm64")
-        SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -v "lib_FoundationICU.so")
+        SWIFT_RUNTIME_LIBS=$(echo "$ALL_LIBS" | grep -E "(libswift|libFoundation|lib_|libdispatch|libBlocks)" | grep -v "lib_FoundationICU.so")
     fi
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
