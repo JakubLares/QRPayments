@@ -12,6 +12,12 @@ echo ""
 # Navigate to Swift package
 cd "$(dirname "$0")/QRPaymentsCore"
 
+# Clean previous build artifacts to ensure fresh build
+if [ -d ".build" ]; then
+    echo "🧹 Cleaning previous build artifacts..."
+    rm -rf .build
+fi
+
 # Build using swiftly
 echo "📦 Building with Swift 6.2 Android SDK..."
 swiftly run swift build \
