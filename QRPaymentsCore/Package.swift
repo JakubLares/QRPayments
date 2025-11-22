@@ -8,8 +8,9 @@ let package = Package(
     platforms: [
         .iOS(.v17),
         .macOS(.v14)
-        // Note: No need to specify Linux/Android platform
-        // Cross-platform packages work on Linux by default
+        // Note: Android support is enabled automatically
+        // Android runs on Linux kernel, so Swift treats it as Linux target
+        // We build on macOS, cross-compile for Android (Linux-based)
     ],
     products: [
         // Library that can be static or dynamic based on context
@@ -23,7 +24,9 @@ let package = Package(
             name: "QRPaymentsCore",
             dependencies: [],
             swiftSettings: [
-                // Add Android-specific compilation flag
+                // Android-specific compilation flag
+                // Android uses Linux kernel, so we check for .linux platform
+                // This activates when cross-compiling from macOS to Android
                 .define("ANDROID", .when(platforms: [.linux])),
                 // Use Swift 6 language mode for better compatibility
                 .enableUpcomingFeature("StrictConcurrency")
