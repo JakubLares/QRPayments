@@ -68,22 +68,53 @@ swift --version
 3. Install according to platform instructions
 4. Verify: `swift --version`
 
-#### Step 3: Install Stable Swift SDK for Android
+#### Step 3: Install Swift SDK for Android
+
+**Important:** As of late 2024/early 2025, there is NO official stable release yet.
+Swift SDK for Android is in preview status. The best option is to use community builds.
+
+**Option A: Install from finagolfin's releases (Recommended)**
 
 ```bash
-# Download stable Swift SDK for Android from:
-# https://www.swift.org/install/
-
-# For example (check latest stable version):
-# https://download.swift.org/swift-6.0-release/...
-
-# Install the SDK
-swift sdk install <path-to-stable-android-sdk>
+# Install Swift 6.2 SDK for Android (most stable community build)
+swift sdk install \
+  https://github.com/finagolfin/swift-android-sdk/releases/download/6.2/swift-6.2-RELEASE-android-24-0.1.artifactbundle.tar.gz \
+  --checksum c26ebfd4e32c0ca1beabcc45729b62042da57ee76d7d043f63f2235da90dc491
 
 # Verify installation
 swift sdk list
-# Should show: aarch64-unknown-linux-android (without "DEVELOPMENT-SNAPSHOT")
+# Should show: swift-6.2-RELEASE-android-24-0.1
 ```
+
+**Option B: Download then install locally**
+
+```bash
+# Download the artifact bundle
+wget https://github.com/finagolfin/swift-android-sdk/releases/download/6.2/swift-6.2-RELEASE-android-24-0.1.artifactbundle.tar.gz
+
+# Verify checksum
+sha256sum swift-6.2-RELEASE-android-24-0.1.artifactbundle.tar.gz
+# Expected: c26ebfd4e32c0ca1beabcc45729b62042da57ee76d7d043f63f2235da90dc491
+
+# Install the local file
+swift sdk install swift-6.2-RELEASE-android-24-0.1.artifactbundle.tar.gz
+```
+
+**Check available versions:**
+- https://github.com/finagolfin/swift-android-sdk/releases
+
+**What SDK name to use when building:**
+
+After installation, get the exact SDK name:
+```bash
+swift sdk list
+```
+
+You'll see something like:
+- `swift-6.2-RELEASE-android-24-0.1` (use this in build commands)
+
+NOT:
+- `aarch64-unknown-linux-android` (this is the architecture, not the SDK name)
 
 #### Step 4: Rebuild Your Project
 
@@ -250,14 +281,19 @@ For the most stable experience:
 | Component | Recommended Version |
 |-----------|---------------------|
 | Swift | 6.0+ (stable release) |
-| Swift SDK for Android | Stable 6.0+ release |
+| Swift SDK for Android | Swift 6.2 from finagolfin/swift-android-sdk |
 | Android NDK | 25.x or 26.x |
-| Android minSdk | 26 |
+| Android minSdk | 24 (matches SDK) |
 | Android targetSdk | 34 |
+
+**Reality Check:** Swift for Android is still in preview. Even the "best" builds are experimental.
+Expect issues and be ready to fall back to the Kotlin bridge implementation if needed.
 
 ## Additional Resources
 
 - **Swift Downloads**: https://www.swift.org/install/
+- **Swift SDK for Android (Community Builds)**: https://github.com/finagolfin/swift-android-sdk
+- **Swift for Android Official Guide**: https://www.swift.org/documentation/articles/swift-sdk-for-android-getting-started.html
 - **Swift for Android Blog**: https://www.swift.org/blog/nightly-swift-sdk-for-android/
 - **Swift Forums (Android)**: https://forums.swift.org/c/development/android/
 - **swift-android-examples**: https://github.com/swiftlang/swift-android-examples
