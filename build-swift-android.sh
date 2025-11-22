@@ -78,13 +78,17 @@ echo ""
 
 # Copy Swift runtime libraries
 echo "📦 Copying Swift runtime libraries..."
+echo ""
 
 # finagolfin's SDK stores runtime libs in the SDK bundle, not build output
 # Find the SDK installation directory
+echo "🔍 Detecting SDK installation path..."
 SDK_LIST_OUTPUT=$(swiftly run swift sdk list 2>&1 | grep "$ANDROID_SDK" | grep " at " | head -1)
 
 if [ -n "$SDK_LIST_OUTPUT" ]; then
+    echo "   Found SDK list entry: $SDK_LIST_OUTPUT"
     SDK_PATH=$(echo "$SDK_LIST_OUTPUT" | sed -n 's/.*at \(.*\)/\1/p')
+    echo "   Extracted path: $SDK_PATH"
 fi
 
 if [ -z "$SDK_PATH" ]; then
@@ -92,20 +96,49 @@ if [ -z "$SDK_PATH" ]; then
     SDK_PATH="$HOME/Library/org.swift.swiftpm/swift-sdks/$ANDROID_SDK.artifactbundle/swift-6.2-release-android-24-sdk"
 fi
 
-echo "Looking for Swift runtime libraries in SDK: $SDK_PATH"
+echo "📂 SDK Path: $SDK_PATH"
+
+# Verify the directory exists
+if [ ! -d "$SDK_PATH" ]; then
+    echo "⚠️  SDK directory does not exist: $SDK_PATH"
+    echo ""
+    echo "Let's check what SDK directories are available:"
+    echo ""
+    if [ -d "$HOME/Library/org.swift.swiftpm/swift-sdks" ]; then
+        ls -la "$HOME/Library/org.swift.swiftpm/swift-sdks/" 2>/dev/null || true
+    else
+        echo "   $HOME/Library/org.swift.swiftpm/swift-sdks directory not found"
+    fi
+    echo ""
+fi
+echo ""
 
 # Find Swift runtime libraries in the SDK
 SWIFT_RUNTIME_LIBS=""
 
 # Try common locations in finagolfin's SDK structure
 if [ -d "$SDK_PATH" ]; then
-    # Look for lib directory in SDK
-    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -name "libswift*.so" -type f | grep -E "aarch64|arm64" 2>/dev/null)
+    echo "🔍 Searching for Swift runtime libraries..."
+    echo "   Strategy 1: Looking for libswift*.so with aarch64/arm64 in path..."
+    SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -name "libswift*.so" -type f 2>/dev/null | grep -E "aarch64|arm64")
 
-    # If not found, try the swift-6.2-release-android-24-sdk subdirectory
-    if [ -z "$SWIFT_RUNTIME_LIBS" ]; then
+    if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
+        echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) libraries with Strategy 1"
+    else
+        echo "   ⚠️  No libraries found with Strategy 1"
+        echo "   Strategy 2: Looking in usr/lib/swift/android/..."
         SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -path "*/usr/lib/swift/android/*/libswift*.so" -type f 2>/dev/null)
+
+        if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
+            echo "   ✅ Found $(echo "$SWIFT_RUNTIME_LIBS" | wc -l | xargs) libraries with Strategy 2"
+        else
+            echo "   ⚠️  No libraries found with Strategy 2"
+            echo ""
+            echo "   Let's see what's actually in the SDK directory:"
+            find "$SDK_PATH" -type f -name "*.so" 2>/dev/null | head -20 || echo "   No .so files found"
+        fi
     fi
+    echo ""
 fi
 
 if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
