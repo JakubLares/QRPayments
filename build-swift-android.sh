@@ -127,13 +127,12 @@ if [ -d "$SDK_PATH" ]; then
     echo ""
 
     # Search for Swift, dispatch, and Blocks libraries specifically
-    # These are the runtime dependencies we need
-    echo "   Searching for required runtime libraries..."
+    # Exclude Foundation libraries (lib_Foundation*.so) - they're huge (39MB+) and not needed for basic Swift
+    echo "   Searching for required runtime libraries (excluding Foundation)..."
     SWIFT_RUNTIME_LIBS=$(find "$SDK_PATH" -type f \( \
         -name "libswift*.so" -o \
         -name "libdispatch.so" -o \
-        -name "libBlocksRuntime.so" -o \
-        -name "lib_*.so" \
+        -name "libBlocksRuntime.so" \
         \) 2>/dev/null | grep -E "aarch64|arm64")
 
     if [ -n "$SWIFT_RUNTIME_LIBS" ]; then
