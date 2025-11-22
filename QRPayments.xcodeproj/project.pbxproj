@@ -14,6 +14,7 @@
 		A1000005000000000000001 /* QRGenerationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000005000000000000001 /* QRGenerationView.swift */; };
 		A1000007000000000000001 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000007000000000000001 /* QRCodeGenerator.swift */; };
 		A1000008000000000000001 /* EditAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000008000000000000001 /* EditAccountView.swift */; };
+		AB000001000000000000001 /* QRPaymentsCore in Frameworks */ = {isa = PBXBuildFile; productRef = AA000001000000000000001 /* QRPaymentsCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA000001000000000000001 /* QRPaymentsCore */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +132,13 @@
 			productReference = A3000000000000000000001 /* QRPayments.app */;
 			productType = "com.apple.product-type.application";
 		};
+/* Begin XCLocalSwiftPackageReference section */
+		A9000001000000000000001 /* XCLocalSwiftPackageReference "QRPaymentsCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = QRPaymentsCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -157,10 +166,21 @@
 			productRefGroup = A5000002000000000000001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			packageReferences = (
+				A9000001000000000000001 /* XCLocalSwiftPackageReference "QRPaymentsCore" */,
+			);
 			targets = (
 				A6000000000000000000001 /* QRPayments */,
 			);
 		};
+/* Begin XCSwiftPackageProductDependency section */
+		AA000001000000000000001 /* QRPaymentsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9000001000000000000001 /* XCLocalSwiftPackageReference "QRPaymentsCore" */;
+			productName = QRPaymentsCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
